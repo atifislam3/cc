@@ -70,10 +70,8 @@ oteColor = input.color(color.new(color.yellow, 80), "OTE Zone Color", group="OTE
 // Function to check if current bar is in a specific time range
 isInSession(int startHour, int endHour) =>
     hourNow = hour(time, "UTC")
-    if startHour < endHour
-        hourNow >= startHour and hourNow < endHour
-    else
-        hourNow >= startHour or hourNow < endHour
+    result = startHour < endHour ? (hourNow >= startHour and hourNow < endHour) : (hourNow >= startHour or hourNow < endHour)
+    result
 
 // Function to detect swing high
 isSwingHigh(int lookback) =>
@@ -225,8 +223,8 @@ var float lastBullOBHigh = na
 var float lastBullOBLow = na
 var float lastBearOBHigh = na
 var float lastBearOBLow = na
-var int lastBullOBBar = na
-var int lastBearOBBar = na
+var int lastBullOBBar = 0
+var int lastBearOBBar = 0
 
 // Track Order Blocks for Breaker detection
 if bullishOB and showBreakerBlocks
@@ -288,7 +286,7 @@ bgcolor(showKillZones and inNYKZ ? nyColor : na, title="NY Kill Zone")
 
 var float asianHigh = na
 var float asianLow = na
-var int asianStartBar = na
+var int asianStartBar = 0
 
 // Track Asian Range
 if asianSessionStart and showAsianRange
@@ -327,7 +325,7 @@ if asianSessionEnd and showAsianRange and not na(asianHigh) and not na(asianLow)
 // OTE Zone is typically between 62% and 79% Fibonacci retracement
 var float oteSwingHigh = na
 var float oteSwingLow = na
-var int oteStartBar = na
+var int oteStartBar = 0
 var bool oteDrawn = false
 
 // Detect significant swings for OTE
@@ -380,7 +378,7 @@ plotshape(isDisplacement and close < open, style=shape.triangledown,
 
 var float lastStructureHigh = na
 var float lastStructureLow = na
-var bool isBullish = na
+var bool isBullish = false
 
 // Track market structure for CHoCH
 if not na(structureSwingHigh)
