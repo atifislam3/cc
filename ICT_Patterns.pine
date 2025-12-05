@@ -418,8 +418,8 @@ if not na(structureSwingLow)
     bosLow := structureSwingLow
 
 // Detect BOS
-bullishBOS = not na(bosHigh) and close > bosHigh and close[1] <= bosHigh[1]
-bearishBOS = not na(bosLow) and close < bosLow and close[1] >= bosLow[1]
+bullishBOS = not na(bosHigh) and close > bosHigh and close[1] <= bosHigh
+bearishBOS = not na(bosLow) and close < bosLow and close[1] >= bosLow
 
 if bullishBOS and showMarketStructure and showLabels
     label.new(bar_index, high, "BOS↑", 
