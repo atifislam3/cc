@@ -575,6 +575,12 @@ Be educational and helpful. Format your response clearly with headers."""
         }), 500
 
 
+@app.route('/visualizer')
+def visualizer():
+    """Auto-pattern detection visualizer with real-time charts"""
+    return render_template('visualizer.html', concepts=ICT_CONCEPTS)
+
+
 if __name__ == '__main__':
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     app.run(debug=debug_mode, port=5000)
