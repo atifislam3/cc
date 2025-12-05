@@ -1,0 +1,496 @@
+// This Pine Script™ source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © ICT Patterns Detector
+
+//@version=5
+indicator("ICT Patterns Detector", overlay=true, max_boxes_count=500, max_lines_count=500, max_labels_count=500)
+
+// ==========================================
+// INPUT SETTINGS
+// ==========================================
+
+// General Settings
+showLabels = input.bool(true, "Show Labels", group="General Settings")
+
+// Order Block Settings
+showOrderBlocks = input.bool(true, "Show Order Blocks", group="Order Blocks")
+obLookback = input.int(10, "Order Block Lookback", minval=1, maxval=50, group="Order Blocks")
+obMitigation = input.bool(true, "Show Mitigated Order Blocks", group="Order Blocks")
+bullOBColor = input.color(color.new(color.green, 70), "Bullish OB Color", group="Order Blocks")
+bearOBColor = input.color(color.new(color.red, 70), "Bearish OB Color", group="Order Blocks")
+
+// Fair Value Gap Settings
+showFVG = input.bool(true, "Show Fair Value Gaps", group="Fair Value Gaps")
+fvgMinSize = input.float(0.0, "Minimum FVG Size (Points)", minval=0, group="Fair Value Gaps")
+bullFVGColor = input.color(color.new(color.teal, 70), "Bullish FVG Color", group="Fair Value Gaps")
+bearFVGColor = input.color(color.new(color.maroon, 70), "Bearish FVG Color", group="Fair Value Gaps")
+
+// Breaker Block Settings
+showBreakerBlocks = input.bool(true, "Show Breaker Blocks", group="Breaker Blocks")
+bullBreakerColor = input.color(color.new(color.lime, 70), "Bullish Breaker Color", group="Breaker Blocks")
+bearBreakerColor = input.color(color.new(color.fuchsia, 70), "Bearish Breaker Color", group="Breaker Blocks")
+
+// Liquidity Settings
+showLiquidity = input.bool(true, "Show Liquidity Levels", group="Liquidity")
+liqLookback = input.int(20, "Liquidity Lookback", minval=5, maxval=100, group="Liquidity")
+buyLiqColor = input.color(color.new(color.green, 50), "Buy Side Liquidity Color", group="Liquidity")
+sellLiqColor = input.color(color.new(color.red, 50), "Sell Side Liquidity Color", group="Liquidity")
+
+// Market Structure Settings
+showMarketStructure = input.bool(true, "Show Market Structure", group="Market Structure")
+msLookback = input.int(5, "Structure Lookback", minval=2, maxval=20, group="Market Structure")
+hhColor = input.color(color.green, "Higher High Color", group="Market Structure")
+llColor = input.color(color.red, "Lower Low Color", group="Market Structure")
+hlColor = input.color(color.lime, "Higher Low Color", group="Market Structure")
+lhColor = input.color(color.orange, "Lower High Color", group="Market Structure")
+
+// Kill Zone Settings
+showKillZones = input.bool(true, "Show Kill Zones", group="Kill Zones")
+asianStart = input.int(0, "Asian Session Start (Hour UTC)", minval=0, maxval=23, group="Kill Zones")
+asianEnd = input.int(8, "Asian Session End (Hour UTC)", minval=0, maxval=23, group="Kill Zones")
+londonStart = input.int(7, "London Session Start (Hour UTC)", minval=0, maxval=23, group="Kill Zones")
+londonEnd = input.int(10, "London Kill Zone End (Hour UTC)", minval=0, maxval=23, group="Kill Zones")
+nyStart = input.int(12, "NY Session Start (Hour UTC)", minval=0, maxval=23, group="Kill Zones")
+nyEnd = input.int(15, "NY Kill Zone End (Hour UTC)", minval=0, maxval=23, group="Kill Zones")
+asianColor = input.color(color.new(color.purple, 90), "Asian Session Color", group="Kill Zones")
+londonColor = input.color(color.new(color.blue, 90), "London Kill Zone Color", group="Kill Zones")
+nyColor = input.color(color.new(color.orange, 90), "NY Kill Zone Color", group="Kill Zones")
+
+// Asian Range Settings
+showAsianRange = input.bool(true, "Show Asian Range", group="Asian Range")
+asianRangeColor = input.color(color.new(color.purple, 80), "Asian Range Color", group="Asian Range")
+
+// Optimal Trade Entry Settings
+showOTE = input.bool(true, "Show OTE Zone", group="OTE")
+oteColor = input.color(color.new(color.yellow, 80), "OTE Zone Color", group="OTE")
+
+// ==========================================
+// HELPER FUNCTIONS
+// ==========================================
+
+// Function to check if current bar is in a specific time range
+isInSession(int startHour, int endHour) =>
+    hourNow = hour(time, "UTC")
+    if startHour < endHour
+        hourNow >= startHour and hourNow < endHour
+    else
+        hourNow >= startHour or hourNow < endHour
+
+// Function to detect swing high
+isSwingHigh(int lookback) =>
+    highestBar = ta.highestbars(high, lookback * 2 + 1)
+    highestBar == -lookback
+
+// Function to detect swing low
+isSwingLow(int lookback) =>
+    lowestBar = ta.lowestbars(low, lookback * 2 + 1)
+    lowestBar == -lookback
+
+// ==========================================
+// ORDER BLOCKS DETECTION
+// ==========================================
+
+var box[] bullOBBoxes = array.new_box()
+var box[] bearOBBoxes = array.new_box()
+
+// Detect Bullish Order Block (last down candle before a strong up move)
+bullishOB = close[1] < open[1] and close > open and close > high[1] and showOrderBlocks
+bearishOB = close[1] > open[1] and close < open and close < low[1] and showOrderBlocks
+
+if bullishOB
+    obBox = box.new(bar_index - 1, high[1], bar_index + 20, low[1], 
+                    border_color=color.green, bgcolor=bullOBColor)
+    array.push(bullOBBoxes, obBox)
+    if showLabels
+        label.new(bar_index - 1, high[1], "Bull OB", 
+                  color=color.new(color.green, 50), textcolor=color.white, 
+                  style=label.style_label_down, size=size.tiny)
+
+if bearishOB
+    obBox = box.new(bar_index - 1, high[1], bar_index + 20, low[1], 
+                    border_color=color.red, bgcolor=bearOBColor)
+    array.push(bearOBBoxes, obBox)
+    if showLabels
+        label.new(bar_index - 1, low[1], "Bear OB", 
+                  color=color.new(color.red, 50), textcolor=color.white, 
+                  style=label.style_label_up, size=size.tiny)
+
+// ==========================================
+// FAIR VALUE GAPS (FVG) DETECTION
+// ==========================================
+
+var box[] bullFVGBoxes = array.new_box()
+var box[] bearFVGBoxes = array.new_box()
+
+// Bullish FVG: Gap between candle 1's high and candle 3's low (3 candle pattern)
+bullishFVG = low > high[2] and showFVG and (low - high[2]) > fvgMinSize
+bearishFVG = high < low[2] and showFVG and (low[2] - high) > fvgMinSize
+
+if bullishFVG
+    fvgBox = box.new(bar_index - 1, low, bar_index + 15, high[2], 
+                     border_color=color.teal, bgcolor=bullFVGColor)
+    array.push(bullFVGBoxes, fvgBox)
+    if showLabels
+        label.new(bar_index - 1, low, "Bull FVG", 
+                  color=color.new(color.teal, 50), textcolor=color.white, 
+                  style=label.style_label_down, size=size.tiny)
+
+if bearishFVG
+    fvgBox = box.new(bar_index - 1, low[2], bar_index + 15, high, 
+                     border_color=color.maroon, bgcolor=bearFVGColor)
+    array.push(bearFVGBoxes, fvgBox)
+    if showLabels
+        label.new(bar_index - 1, high, "Bear FVG", 
+                  color=color.new(color.maroon, 50), textcolor=color.white, 
+                  style=label.style_label_up, size=size.tiny)
+
+// ==========================================
+// LIQUIDITY LEVELS DETECTION
+// ==========================================
+
+// Detect Equal Highs (Buy Side Liquidity)
+swingHigh = isSwingHigh(liqLookback)
+swingLow = isSwingLow(liqLookback)
+
+if swingHigh and showLiquidity
+    line.new(bar_index - liqLookback, high[liqLookback], bar_index + 10, high[liqLookback], 
+             color=sellLiqColor, style=line.style_dashed, width=1)
+    if showLabels
+        label.new(bar_index - liqLookback, high[liqLookback], "BSL", 
+                  color=color.new(color.red, 70), textcolor=color.white, 
+                  style=label.style_label_down, size=size.tiny)
+
+if swingLow and showLiquidity
+    line.new(bar_index - liqLookback, low[liqLookback], bar_index + 10, low[liqLookback], 
+             color=buyLiqColor, style=line.style_dashed, width=1)
+    if showLabels
+        label.new(bar_index - liqLookback, low[liqLookback], "SSL", 
+                  color=color.new(color.green, 70), textcolor=color.white, 
+                  style=label.style_label_up, size=size.tiny)
+
+// ==========================================
+// MARKET STRUCTURE DETECTION
+// ==========================================
+
+var float lastSwingHigh = na
+var float lastSwingLow = na
+var float prevSwingHigh = na
+var float prevSwingLow = na
+
+// Detect structure shifts
+structureSwingHigh = ta.pivothigh(high, msLookback, msLookback)
+structureSwingLow = ta.pivotlow(low, msLookback, msLookback)
+
+if not na(structureSwingHigh) and showMarketStructure
+    prevSwingHigh := lastSwingHigh
+    lastSwingHigh := structureSwingHigh
+    
+    if not na(prevSwingHigh)
+        if lastSwingHigh > prevSwingHigh
+            // Higher High
+            if showLabels
+                label.new(bar_index - msLookback, high[msLookback], "HH", 
+                          color=color.new(hhColor, 50), textcolor=color.white, 
+                          style=label.style_label_down, size=size.tiny)
+        else
+            // Lower High
+            if showLabels
+                label.new(bar_index - msLookback, high[msLookback], "LH", 
+                          color=color.new(lhColor, 50), textcolor=color.white, 
+                          style=label.style_label_down, size=size.tiny)
+
+if not na(structureSwingLow) and showMarketStructure
+    prevSwingLow := lastSwingLow
+    lastSwingLow := structureSwingLow
+    
+    if not na(prevSwingLow)
+        if lastSwingLow > prevSwingLow
+            // Higher Low
+            if showLabels
+                label.new(bar_index - msLookback, low[msLookback], "HL", 
+                          color=color.new(hlColor, 50), textcolor=color.white, 
+                          style=label.style_label_up, size=size.tiny)
+        else
+            // Lower Low
+            if showLabels
+                label.new(bar_index - msLookback, low[msLookback], "LL", 
+                          color=color.new(llColor, 50), textcolor=color.white, 
+                          style=label.style_label_up, size=size.tiny)
+
+// ==========================================
+// BREAKER BLOCKS DETECTION
+// ==========================================
+
+// Breaker Block: Failed Order Block that gets broken
+var float lastBullOBHigh = na
+var float lastBullOBLow = na
+var float lastBearOBHigh = na
+var float lastBearOBLow = na
+var int lastBullOBBar = na
+var int lastBearOBBar = na
+
+// Track Order Blocks for Breaker detection
+if bullishOB and showBreakerBlocks
+    lastBullOBHigh := high[1]
+    lastBullOBLow := low[1]
+    lastBullOBBar := bar_index - 1
+
+if bearishOB and showBreakerBlocks
+    lastBearOBHigh := high[1]
+    lastBearOBLow := low[1]
+    lastBearOBBar := bar_index - 1
+
+// Detect Bullish Breaker (failed bearish OB)
+if not na(lastBearOBLow) and close > lastBearOBHigh and showBreakerBlocks
+    box.new(lastBearOBBar, lastBearOBHigh, bar_index + 10, lastBearOBLow, 
+            border_color=color.lime, bgcolor=bullBreakerColor)
+    if showLabels
+        label.new(bar_index, lastBearOBHigh, "Bull Breaker", 
+                  color=color.new(color.lime, 50), textcolor=color.white, 
+                  style=label.style_label_down, size=size.tiny)
+    lastBearOBHigh := na
+    lastBearOBLow := na
+
+// Detect Bearish Breaker (failed bullish OB)
+if not na(lastBullOBHigh) and close < lastBullOBLow and showBreakerBlocks
+    box.new(lastBullOBBar, lastBullOBHigh, bar_index + 10, lastBullOBLow, 
+            border_color=color.fuchsia, bgcolor=bearBreakerColor)
+    if showLabels
+        label.new(bar_index, lastBullOBLow, "Bear Breaker", 
+                  color=color.new(color.fuchsia, 50), textcolor=color.white, 
+                  style=label.style_label_up, size=size.tiny)
+    lastBullOBHigh := na
+    lastBullOBLow := na
+
+// ==========================================
+// KILL ZONES HIGHLIGHTING
+// ==========================================
+
+// Asian Session
+inAsianSession = isInSession(asianStart, asianEnd)
+asianSessionStart = inAsianSession and not inAsianSession[1]
+
+// London Kill Zone
+inLondonKZ = isInSession(londonStart, londonEnd)
+londonKZStart = inLondonKZ and not inLondonKZ[1]
+
+// New York Kill Zone
+inNYKZ = isInSession(nyStart, nyEnd)
+nyKZStart = inNYKZ and not inNYKZ[1]
+
+// Background colors for sessions
+bgcolor(showKillZones and inAsianSession ? asianColor : na, title="Asian Session")
+bgcolor(showKillZones and inLondonKZ ? londonColor : na, title="London Kill Zone")
+bgcolor(showKillZones and inNYKZ ? nyColor : na, title="NY Kill Zone")
+
+// ==========================================
+// ASIAN RANGE DETECTION
+// ==========================================
+
+var float asianHigh = na
+var float asianLow = na
+var int asianStartBar = na
+
+// Track Asian Range
+if asianSessionStart and showAsianRange
+    asianHigh := high
+    asianLow := low
+    asianStartBar := bar_index
+
+if inAsianSession and showAsianRange
+    asianHigh := math.max(nz(asianHigh, high), high)
+    asianLow := math.min(nz(asianLow, low), low)
+
+// Draw Asian Range when session ends
+asianSessionEnd = not inAsianSession and inAsianSession[1]
+if asianSessionEnd and showAsianRange and not na(asianHigh) and not na(asianLow)
+    // Draw Asian Range High
+    line.new(asianStartBar, asianHigh, bar_index + 20, asianHigh, 
+             color=color.purple, style=line.style_solid, width=2)
+    // Draw Asian Range Low
+    line.new(asianStartBar, asianLow, bar_index + 20, asianLow, 
+             color=color.purple, style=line.style_solid, width=2)
+    // Draw Asian Range Box
+    box.new(asianStartBar, asianHigh, bar_index + 20, asianLow, 
+            border_color=color.purple, bgcolor=asianRangeColor)
+    if showLabels
+        label.new(bar_index, asianHigh, "Asian High", 
+                  color=color.new(color.purple, 50), textcolor=color.white, 
+                  style=label.style_label_down, size=size.tiny)
+        label.new(bar_index, asianLow, "Asian Low", 
+                  color=color.new(color.purple, 50), textcolor=color.white, 
+                  style=label.style_label_up, size=size.tiny)
+
+// ==========================================
+// OPTIMAL TRADE ENTRY (OTE) ZONE
+// ==========================================
+
+// OTE Zone is typically between 62% and 79% Fibonacci retracement
+var float oteSwingHigh = na
+var float oteSwingLow = na
+var int oteStartBar = na
+var bool oteDrawn = false
+
+// Detect significant swings for OTE
+oteSignificantHigh = ta.pivothigh(high, 10, 5)
+oteSignificantLow = ta.pivotlow(low, 10, 5)
+
+if not na(oteSignificantHigh) and showOTE
+    oteSwingHigh := oteSignificantHigh
+    oteStartBar := bar_index - 5
+    oteDrawn := false
+
+if not na(oteSignificantLow) and showOTE
+    oteSwingLow := oteSignificantLow
+    oteDrawn := false
+
+// Draw OTE Zone when we have both swing high and low
+if not na(oteSwingHigh) and not na(oteSwingLow) and not oteDrawn and showOTE
+    swingRange = oteSwingHigh - oteSwingLow
+    ote62 = oteSwingLow + swingRange * 0.62
+    ote79 = oteSwingLow + swingRange * 0.79
+    
+    if swingRange > 0
+        box.new(bar_index - 10, ote79, bar_index + 10, ote62, 
+                border_color=color.yellow, bgcolor=oteColor)
+        if showLabels
+            label.new(bar_index, (ote62 + ote79) / 2, "OTE Zone", 
+                      color=color.new(color.yellow, 50), textcolor=color.black, 
+                      style=label.style_label_left, size=size.tiny)
+        oteDrawn := true
+
+// ==========================================
+// DISPLACEMENT DETECTION
+// ==========================================
+
+// Displacement is a strong impulsive move (large candle)
+avgBodySize = ta.sma(math.abs(close - open), 20)
+isDisplacement = math.abs(close - open) > avgBodySize * 2
+
+// Plot displacement candles
+plotshape(isDisplacement and close > open, style=shape.triangleup, 
+          location=location.belowbar, color=color.green, size=size.tiny, 
+          title="Bullish Displacement")
+plotshape(isDisplacement and close < open, style=shape.triangledown, 
+          location=location.abovebar, color=color.red, size=size.tiny, 
+          title="Bearish Displacement")
+
+// ==========================================
+// CHANGE OF CHARACTER (CHoCH) DETECTION
+// ==========================================
+
+var float lastStructureHigh = na
+var float lastStructureLow = na
+var bool isBullish = na
+
+// Track market structure for CHoCH
+if not na(structureSwingHigh)
+    if not na(lastStructureHigh) and structureSwingHigh < lastStructureHigh and isBullish == true
+        // Bearish CHoCH - failed to make higher high in uptrend
+        if showMarketStructure and showLabels
+            label.new(bar_index - msLookback, high[msLookback], "CHoCH↓", 
+                      color=color.new(color.red, 30), textcolor=color.white, 
+                      style=label.style_label_down, size=size.small)
+        isBullish := false
+    lastStructureHigh := structureSwingHigh
+
+if not na(structureSwingLow)
+    if not na(lastStructureLow) and structureSwingLow > lastStructureLow and isBullish == false
+        // Bullish CHoCH - failed to make lower low in downtrend
+        if showMarketStructure and showLabels
+            label.new(bar_index - msLookback, low[msLookback], "CHoCH↑", 
+                      color=color.new(color.green, 30), textcolor=color.white, 
+                      style=label.style_label_up, size=size.small)
+        isBullish := true
+    lastStructureLow := structureSwingLow
+
+// ==========================================
+// BREAK OF STRUCTURE (BOS) DETECTION
+// ==========================================
+
+var float bosHigh = na
+var float bosLow = na
+
+// Track BOS
+if not na(structureSwingHigh)
+    bosHigh := structureSwingHigh
+
+if not na(structureSwingLow)
+    bosLow := structureSwingLow
+
+// Detect BOS
+bullishBOS = not na(bosHigh) and close > bosHigh and close[1] <= bosHigh[1]
+bearishBOS = not na(bosLow) and close < bosLow and close[1] >= bosLow[1]
+
+if bullishBOS and showMarketStructure and showLabels
+    label.new(bar_index, high, "BOS↑", 
+              color=color.new(color.green, 30), textcolor=color.white, 
+              style=label.style_label_down, size=size.small)
+
+if bearishBOS and showMarketStructure and showLabels
+    label.new(bar_index, low, "BOS↓", 
+              color=color.new(color.red, 30), textcolor=color.white, 
+              style=label.style_label_up, size=size.small)
+
+// ==========================================
+// INFORMATION TABLE
+// ==========================================
+
+var table infoTable = table.new(position.top_right, 2, 10, 
+                                 bgcolor=color.new(color.black, 70), 
+                                 border_width=1)
+
+if barstate.islast
+    table.cell(infoTable, 0, 0, "ICT Pattern", text_color=color.white, text_size=size.small)
+    table.cell(infoTable, 1, 0, "Status", text_color=color.white, text_size=size.small)
+    
+    table.cell(infoTable, 0, 1, "Order Blocks", text_color=color.white, text_size=size.tiny)
+    table.cell(infoTable, 1, 1, showOrderBlocks ? "ON" : "OFF", 
+               text_color=showOrderBlocks ? color.green : color.red, text_size=size.tiny)
+    
+    table.cell(infoTable, 0, 2, "Fair Value Gaps", text_color=color.white, text_size=size.tiny)
+    table.cell(infoTable, 1, 2, showFVG ? "ON" : "OFF", 
+               text_color=showFVG ? color.green : color.red, text_size=size.tiny)
+    
+    table.cell(infoTable, 0, 3, "Breaker Blocks", text_color=color.white, text_size=size.tiny)
+    table.cell(infoTable, 1, 3, showBreakerBlocks ? "ON" : "OFF", 
+               text_color=showBreakerBlocks ? color.green : color.red, text_size=size.tiny)
+    
+    table.cell(infoTable, 0, 4, "Liquidity", text_color=color.white, text_size=size.tiny)
+    table.cell(infoTable, 1, 4, showLiquidity ? "ON" : "OFF", 
+               text_color=showLiquidity ? color.green : color.red, text_size=size.tiny)
+    
+    table.cell(infoTable, 0, 5, "Market Structure", text_color=color.white, text_size=size.tiny)
+    table.cell(infoTable, 1, 5, showMarketStructure ? "ON" : "OFF", 
+               text_color=showMarketStructure ? color.green : color.red, text_size=size.tiny)
+    
+    table.cell(infoTable, 0, 6, "Kill Zones", text_color=color.white, text_size=size.tiny)
+    table.cell(infoTable, 1, 6, showKillZones ? "ON" : "OFF", 
+               text_color=showKillZones ? color.green : color.red, text_size=size.tiny)
+    
+    table.cell(infoTable, 0, 7, "Asian Range", text_color=color.white, text_size=size.tiny)
+    table.cell(infoTable, 1, 7, showAsianRange ? "ON" : "OFF", 
+               text_color=showAsianRange ? color.green : color.red, text_size=size.tiny)
+    
+    table.cell(infoTable, 0, 8, "OTE Zone", text_color=color.white, text_size=size.tiny)
+    table.cell(infoTable, 1, 8, showOTE ? "ON" : "OFF", 
+               text_color=showOTE ? color.green : color.red, text_size=size.tiny)
+    
+    // Current Session
+    currentSession = inAsianSession ? "Asian" : inLondonKZ ? "London KZ" : inNYKZ ? "NY KZ" : "None"
+    table.cell(infoTable, 0, 9, "Current Session", text_color=color.white, text_size=size.tiny)
+    table.cell(infoTable, 1, 9, currentSession, text_color=color.yellow, text_size=size.tiny)
+
+// ==========================================
+// ALERTS
+// ==========================================
+
+// Alert conditions
+alertcondition(bullishOB, title="Bullish Order Block", message="Bullish Order Block Detected!")
+alertcondition(bearishOB, title="Bearish Order Block", message="Bearish Order Block Detected!")
+alertcondition(bullishFVG, title="Bullish FVG", message="Bullish Fair Value Gap Detected!")
+alertcondition(bearishFVG, title="Bearish FVG", message="Bearish Fair Value Gap Detected!")
+alertcondition(bullishBOS, title="Bullish BOS", message="Bullish Break of Structure!")
+alertcondition(bearishBOS, title="Bearish BOS", message="Bearish Break of Structure!")
+alertcondition(isDisplacement, title="Displacement", message="Displacement Candle Detected!")
+alertcondition(londonKZStart, title="London Kill Zone Start", message="London Kill Zone Started!")
+alertcondition(nyKZStart, title="NY Kill Zone Start", message="New York Kill Zone Started!")
