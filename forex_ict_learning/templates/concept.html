@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ concept.name }} - ICT Trading Concepts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line me-2"></i>ICT Trading Academy
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/chart">
+                            <i class="fas fa-chart-candlestick me-1"></i>Live Chart
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/practice">
+                            <i class="fas fa-dumbbell me-1"></i>Practice
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="concept-detail-page">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-section bg-dark py-3">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ concept.name }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Concept Header -->
+        <section class="concept-header-section py-5 bg-gradient-primary">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <span class="badge {{ 'bg-success' if concept.difficulty == 'Beginner' else 'bg-warning' if concept.difficulty == 'Intermediate' else 'bg-danger' }} mb-3">
+                            {{ concept.difficulty }}
+                        </span>
+                        <h1 class="display-4 fw-bold text-white mb-3">{{ concept.name }}</h1>
+                        <p class="lead text-white-50">
+                            <i class="fas fa-tag me-2"></i>Category: {{ concept.category }}
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <div class="concept-icon-large">
+                            <span class="badge-short">{{ concept.short_name }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Section -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row">
+                    <!-- Main Content -->
+                    <div class="col-lg-8">
+                        <!-- Description -->
+                        <div class="content-card mb-4">
+                            <h3 class="card-title">
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                What is {{ concept.short_name }}?
+                            </h3>
+                            <div class="card-body">
+                                <p class="concept-full-description">{{ concept.description }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Visual Explanation -->
+                        <div class="content-card mb-4">
+                            <h3 class="card-title">
+                                <i class="fas fa-image text-success me-2"></i>
+                                Visual Explanation
+                            </h3>
+                            <div class="card-body">
+                                <!-- SVG Visualization based on concept -->
+                                <div class="chart-visualization" id="conceptVisualization">
+                                    {% if concept_id == 'fvg' %}
+                                    <!-- FVG Visualization -->
+                                    <svg viewBox="0 0 600 400" class="concept-svg">
+                                        <!-- Background -->
+                                        <rect width="600" height="400" fill="#1a1a2e"/>
+                                        
+                                        <!-- Grid lines -->
+                                        <g stroke="#333" stroke-width="1">
+                                            <line x1="0" y1="100" x2="600" y2="100"/>
+                                            <line x1="0" y1="200" x2="600" y2="200"/>
+                                            <line x1="0" y1="300" x2="600" y2="300"/>
+                                        </g>
+                                        
+                                        <!-- Candle 1 (Bearish) -->
+                                        <g class="candle-1">
+                                            <line x1="150" y1="280" x2="150" y2="120" stroke="#888" stroke-width="2"/>
+                                            <rect x="130" y="150" width="40" height="100" fill="#e74c3c" rx="2"/>
+                                            <text x="150" y="310" fill="#fff" text-anchor="middle" font-size="14">Candle 1</text>
+                                        </g>
+                                        
+                                        <!-- Candle 2 (Large Bullish - creates the gap) -->
+                                        <g class="candle-2">
+                                            <line x1="300" y1="180" x2="300" y2="50" stroke="#888" stroke-width="2"/>
+                                            <rect x="280" y="60" width="40" height="110" fill="#2ecc71" rx="2"/>
+                                            <text x="300" y="310" fill="#fff" text-anchor="middle" font-size="14">Candle 2</text>
+                                        </g>
+                                        
+                                        <!-- Candle 3 (Small Bullish) -->
+                                        <g class="candle-3">
+                                            <line x1="450" y1="130" x2="450" y2="40" stroke="#888" stroke-width="2"/>
+                                            <rect x="430" y="50" width="40" height="70" fill="#2ecc71" rx="2"/>
+                                            <text x="450" y="310" fill="#fff" text-anchor="middle" font-size="14">Candle 3</text>
+                                        </g>
+                                        
+                                        <!-- FVG Zone (Gap between candle 1 high and candle 3 low) -->
+                                        <rect x="130" y="120" width="340" height="10" fill="rgba(52, 152, 219, 0.3)" class="fvg-zone"/>
+                                        <rect x="130" y="120" width="340" height="10" fill="none" stroke="#3498db" stroke-width="2" stroke-dasharray="5,5"/>
+                                        
+                                        <!-- Labels -->
+                                        <text x="550" y="125" fill="#3498db" font-size="14" font-weight="bold">← FVG Zone</text>
+                                        
+                                        <!-- Arrow showing gap -->
+                                        <g class="gap-indicator">
+                                            <line x1="80" y1="120" x2="80" y2="130" stroke="#f39c12" stroke-width="3"/>
+                                            <polygon points="75,115 80,105 85,115" fill="#f39c12"/>
+                                            <polygon points="75,135 80,145 85,135" fill="#f39c12"/>
+                                            <text x="40" y="127" fill="#f39c12" font-size="12">Gap</text>
+                                        </g>
+                                        
+                                        <!-- Legend -->
+                                        <g transform="translate(400, 340)">
+                                            <rect x="0" y="0" width="15" height="15" fill="rgba(52, 152, 219, 0.3)" stroke="#3498db"/>
+                                            <text x="20" y="12" fill="#fff" font-size="12">Fair Value Gap</text>
+                                        </g>
+                                    </svg>
+                                    <div class="visualization-note mt-3">
+                                        <p class="mb-2"><strong>📌 Key Points:</strong></p>
+                                        <ul>
+                                            <li>The gap between Candle 1's high and Candle 3's low is the <strong>Fair Value Gap</strong></li>
+                                            <li>This bullish FVG indicates aggressive buying created an imbalance</li>
+                                            <li>Price often returns to "fill" this gap before continuing</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    {% elif concept_id == 'bos' %}
+                                    <!-- BOS Visualization -->
+                                    <svg viewBox="0 0 600 400" class="concept-svg">
+                                        <rect width="600" height="400" fill="#1a1a2e"/>
+                                        
+                                        <!-- Grid -->
+                                        <g stroke="#333" stroke-width="1">
+                                            <line x1="0" y1="100" x2="600" y2="100" stroke-dasharray="5,5"/>
+                                            <line x1="0" y1="200" x2="600" y2="200" stroke-dasharray="5,5"/>
+                                            <line x1="0" y1="300" x2="600" y2="300" stroke-dasharray="5,5"/>
+                                        </g>
+                                        
+                                        <!-- Swing Low 1 -->
+                                        <g class="swing-low">
+                                            <line x1="80" y1="280" x2="80" y2="320" stroke="#888" stroke-width="2"/>
+                                            <rect x="65" y="290" width="30" height="20" fill="#e74c3c"/>
+                                            <line x1="20" y1="320" x2="150" y2="320" stroke="#e74c3c" stroke-width="1" stroke-dasharray="3,3"/>
+                                            <text x="80" y="350" fill="#e74c3c" text-anchor="middle" font-size="12">Swing Low</text>
+                                        </g>
+                                        
+                                        <!-- Swing High -->
+                                        <g class="swing-high">
+                                            <line x1="200" y1="120" x2="200" y2="180" stroke="#888" stroke-width="2"/>
+                                            <rect x="185" y="130" width="30" height="40" fill="#2ecc71"/>
+                                            <line x1="100" y1="120" x2="500" y2="120" stroke="#2ecc71" stroke-width="2" stroke-dasharray="5,5"/>
+                                            <text x="200" y="105" fill="#2ecc71" text-anchor="middle" font-size="12">Previous High</text>
+                                        </g>
+                                        
+                                        <!-- Higher Low -->
+                                        <g class="higher-low">
+                                            <line x1="300" y1="220" x2="300" y2="270" stroke="#888" stroke-width="2"/>
+                                            <rect x="285" y="230" width="30" height="30" fill="#e74c3c"/>
+                                            <text x="300" y="300" fill="#e74c3c" text-anchor="middle" font-size="12">Higher Low</text>
+                                        </g>
+                                        
+                                        <!-- BOS Candle -->
+                                        <g class="bos-candle">
+                                            <line x1="420" y1="60" x2="420" y2="150" stroke="#888" stroke-width="2"/>
+                                            <rect x="405" y="70" width="30" height="70" fill="#2ecc71"/>
+                                            <text x="420" y="180" fill="#2ecc71" text-anchor="middle" font-size="12" font-weight="bold">BOS!</text>
+                                        </g>
+                                        
+                                        <!-- Continuation -->
+                                        <g class="continuation">
+                                            <line x1="520" y1="40" x2="520" y2="100" stroke="#888" stroke-width="2"/>
+                                            <rect x="505" y="50" width="30" height="40" fill="#2ecc71"/>
+                                        </g>
+                                        
+                                        <!-- BOS Arrow -->
+                                        <g class="bos-arrow">
+                                            <path d="M 360 130 Q 390 80 420 80" fill="none" stroke="#f39c12" stroke-width="3"/>
+                                            <polygon points="420,75 430,80 420,85" fill="#f39c12"/>
+                                            <text x="380" y="145" fill="#f39c12" font-size="14" font-weight="bold">Break!</text>
+                                        </g>
+                                        
+                                        <!-- Legend -->
+                                        <text x="30" y="30" fill="#fff" font-size="16" font-weight="bold">Bullish Break of Structure</text>
+                                    </svg>
+                                    <div class="visualization-note mt-3">
+                                        <p class="mb-2"><strong>📌 Key Points:</strong></p>
+                                        <ul>
+                                            <li>BOS confirms trend continuation</li>
+                                            <li>The candle body closing above the previous high confirms the break</li>
+                                            <li>Look for pullback to the broken level for entry</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    {% elif concept_id == 'choch' %}
+                                    <!-- CHoCH Visualization -->
+                                    <svg viewBox="0 0 600 400" class="concept-svg">
+                                        <rect width="600" height="400" fill="#1a1a2e"/>
+                                        
+                                        <!-- Uptrend candles -->
+                                        <g class="uptrend">
+                                            <!-- HL1 -->
+                                            <rect x="50" y="280" width="25" height="40" fill="#2ecc71"/>
+                                            <line x1="62" y1="260" x2="62" y2="330" stroke="#888" stroke-width="2"/>
+                                            
+                                            <!-- HH1 -->
+                                            <rect x="100" y="200" width="25" height="50" fill="#2ecc71"/>
+                                            <line x1="112" y1="180" x2="112" y2="260" stroke="#888" stroke-width="2"/>
+                                            
+                                            <!-- HL2 -->
+                                            <rect x="150" y="240" width="25" height="40" fill="#2ecc71"/>
+                                            <line x1="162" y1="220" x2="162" y2="290" stroke="#888" stroke-width="2"/>
+                                            <line x1="30" y1="290" x2="300" y2="290" stroke="#2ecc71" stroke-width="1" stroke-dasharray="3,3"/>
+                                            <text x="162" y="310" fill="#2ecc71" text-anchor="middle" font-size="10">HL</text>
+                                            
+                                            <!-- HH2 (Last HH before reversal) -->
+                                            <rect x="200" y="130" width="25" height="60" fill="#2ecc71"/>
+                                            <line x1="212" y1="110" x2="212" y2="200" stroke="#888" stroke-width="2"/>
+                                            <line x1="100" y1="110" x2="400" y2="110" stroke="#2ecc71" stroke-width="2" stroke-dasharray="5,5"/>
+                                            <text x="212" y="100" fill="#2ecc71" text-anchor="middle" font-size="10">HH</text>
+                                        </g>
+                                        
+                                        <!-- Reversal Point -->
+                                        <g class="reversal">
+                                            <!-- LH -->
+                                            <rect x="270" y="160" width="25" height="50" fill="#e74c3c"/>
+                                            <line x1="282" y1="140" x2="282" y2="220" stroke="#888" stroke-width="2"/>
+                                            <text x="282" y="130" fill="#f39c12" text-anchor="middle" font-size="10">Lower High!</text>
+                                            
+                                            <!-- CHoCH Break -->
+                                            <rect x="340" y="290" width="25" height="70" fill="#e74c3c"/>
+                                            <line x1="352" y1="270" x2="352" y2="370" stroke="#888" stroke-width="2"/>
+                                        </g>
+                                        
+                                        <!-- CHoCH Zone -->
+                                        <rect x="300" y="285" width="100" height="15" fill="rgba(231, 76, 60, 0.3)"/>
+                                        <text x="350" y="330" fill="#e74c3c" text-anchor="middle" font-size="14" font-weight="bold">CHoCH!</text>
+                                        
+                                        <!-- Continuation bearish -->
+                                        <g class="bearish-continuation">
+                                            <rect x="400" y="250" width="25" height="40" fill="#e74c3c"/>
+                                            <line x1="412" y1="230" x2="412" y2="300" stroke="#888" stroke-width="2"/>
+                                            
+                                            <rect x="460" y="300" width="25" height="50" fill="#e74c3c"/>
+                                            <line x1="472" y1="280" x2="472" y2="360" stroke="#888" stroke-width="2"/>
+                                            
+                                            <rect x="520" y="280" width="25" height="40" fill="#e74c3c"/>
+                                            <line x1="532" y1="260" x2="532" y2="330" stroke="#888" stroke-width="2"/>
+                                        </g>
+                                        
+                                        <!-- Labels -->
+                                        <text x="100" y="30" fill="#2ecc71" font-size="14">Uptrend</text>
+                                        <text x="450" y="30" fill="#e74c3c" font-size="14">New Downtrend</text>
+                                        
+                                        <!-- Arrow -->
+                                        <path d="M 310 295 L 380 295" stroke="#f39c12" stroke-width="3" marker-end="url(#arrowhead)"/>
+                                        <defs>
+                                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                                <polygon points="0 0, 10 3.5, 0 7" fill="#f39c12"/>
+                                            </marker>
+                                        </defs>
+                                    </svg>
+                                    <div class="visualization-note mt-3">
+                                        <p class="mb-2"><strong>📌 Key Points:</strong></p>
+                                        <ul>
+                                            <li>CHoCH shows the first sign of trend reversal</li>
+                                            <li>Breaking below the last Higher Low signals potential bearish reversal</li>
+                                            <li>Wait for confirmation before taking reversal trades</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    {% elif concept_id == 'order_blocks' %}
+                                    <!-- Order Block Visualization -->
+                                    <svg viewBox="0 0 600 400" class="concept-svg">
+                                        <rect width="600" height="400" fill="#1a1a2e"/>
+                                        
+                                        <!-- Before impulsive move -->
+                                        <g class="before-move">
+                                            <rect x="80" y="250" width="30" height="50" fill="#2ecc71"/>
+                                            <line x1="95" y1="230" x2="95" y2="310" stroke="#888" stroke-width="2"/>
+                                            
+                                            <!-- ORDER BLOCK - Last bearish candle before bullish move -->
+                                            <rect x="130" y="260" width="30" height="60" fill="#e74c3c"/>
+                                            <line x1="145" y1="240" x2="145" y2="330" stroke="#888" stroke-width="2"/>
+                                        </g>
+                                        
+                                        <!-- Order Block Zone -->
+                                        <rect x="125" y="255" width="200" height="80" fill="rgba(52, 152, 219, 0.2)" class="ob-zone"/>
+                                        <rect x="125" y="255" width="200" height="80" fill="none" stroke="#3498db" stroke-width="2"/>
+                                        <text x="225" y="360" fill="#3498db" text-anchor="middle" font-size="14" font-weight="bold">Bullish Order Block</text>
+                                        
+                                        <!-- Impulsive bullish move -->
+                                        <g class="impulsive-move">
+                                            <rect x="180" y="150" width="30" height="100" fill="#2ecc71"/>
+                                            <line x1="195" y1="120" x2="195" y2="260" stroke="#888" stroke-width="2"/>
+                                            
+                                            <rect x="230" y="80" width="30" height="90" fill="#2ecc71"/>
+                                            <line x1="245" y1="50" x2="245" y2="180" stroke="#888" stroke-width="2"/>
+                                            
+                                            <rect x="280" y="50" width="30" height="60" fill="#2ecc71"/>
+                                            <line x1="295" y1="30" x2="295" y2="120" stroke="#888" stroke-width="2"/>
+                                        </g>
+                                        
+                                        <!-- Price returns to OB -->
+                                        <g class="return-to-ob">
+                                            <rect x="350" y="100" width="25" height="70" fill="#e74c3c"/>
+                                            <line x1="362" y1="80" x2="362" y2="180" stroke="#888" stroke-width="2"/>
+                                            
+                                            <rect x="400" y="150" width="25" height="60" fill="#e74c3c"/>
+                                            <line x1="412" y1="130" x2="412" y2="220" stroke="#888" stroke-width="2"/>
+                                            
+                                            <!-- Entry at OB -->
+                                            <rect x="450" y="240" width="25" height="50" fill="#e74c3c"/>
+                                            <line x1="462" y1="220" x2="462" y2="300" stroke="#888" stroke-width="2"/>
+                                            
+                                            <!-- Reaction from OB -->
+                                            <rect x="500" y="180" width="25" height="70" fill="#2ecc71"/>
+                                            <line x1="512" y1="160" x2="512" y2="260" stroke="#888" stroke-width="2"/>
+                                            
+                                            <rect x="550" y="120" width="25" height="80" fill="#2ecc71"/>
+                                            <line x1="562" y1="100" x2="562" y2="210" stroke="#888" stroke-width="2"/>
+                                        </g>
+                                        
+                                        <!-- Entry arrow -->
+                                        <g class="entry-indicator">
+                                            <circle cx="462" cy="280" r="8" fill="#f39c12" stroke="#fff" stroke-width="2"/>
+                                            <text x="480" y="285" fill="#f39c12" font-size="12" font-weight="bold">Entry!</text>
+                                        </g>
+                                        
+                                        <!-- Labels -->
+                                        <text x="145" y="230" fill="#e74c3c" text-anchor="middle" font-size="10">OB Candle</text>
+                                        <text x="240" y="40" fill="#2ecc71" text-anchor="middle" font-size="12">Impulsive Move</text>
+                                    </svg>
+                                    <div class="visualization-note mt-3">
+                                        <p class="mb-2"><strong>📌 Key Points:</strong></p>
+                                        <ul>
+                                            <li>Order Block = Last bearish candle before bullish impulse (for bullish OB)</li>
+                                            <li>The impulsive move away confirms the OB validity</li>
+                                            <li>Enter when price returns to the OB zone</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    {% elif concept_id == 'liquidity' %}
+                                    <!-- Liquidity Visualization -->
+                                    <svg viewBox="0 0 600 400" class="concept-svg">
+                                        <rect width="600" height="400" fill="#1a1a2e"/>
+                                        
+                                        <!-- Buy Side Liquidity Zone -->
+                                        <rect x="50" y="50" width="500" height="30" fill="rgba(46, 204, 113, 0.2)"/>
+                                        <line x1="50" y1="80" x2="550" y2="80" stroke="#2ecc71" stroke-width="2" stroke-dasharray="5,5"/>
+                                        <text x="300" y="70" fill="#2ecc71" text-anchor="middle" font-size="14" font-weight="bold">Buy Side Liquidity (BSL)</text>
+                                        <text x="300" y="45" fill="#2ecc71" text-anchor="middle" font-size="10">Stop losses from shorts / Buy stops</text>
+                                        
+                                        <!-- Equal Highs -->
+                                        <g class="equal-highs">
+                                            <line x1="150" y1="100" x2="150" y2="150" stroke="#888" stroke-width="2"/>
+                                            <rect x="140" y="105" width="20" height="40" fill="#2ecc71"/>
+                                            
+                                            <line x1="250" y1="100" x2="250" y2="160" stroke="#888" stroke-width="2"/>
+                                            <rect x="240" y="110" width="20" height="45" fill="#2ecc71"/>
+                                            
+                                            <line x1="350" y1="100" x2="350" y2="155" stroke="#888" stroke-width="2"/>
+                                            <rect x="340" y="107" width="20" height="42" fill="#2ecc71"/>
+                                            
+                                            <line x1="100" y1="100" x2="400" y2="100" stroke="#f39c12" stroke-width="1" stroke-dasharray="3,3"/>
+                                            <text x="420" y="105" fill="#f39c12" font-size="11">Equal Highs = Liquidity!</text>
+                                        </g>
+                                        
+                                        <!-- Middle price action -->
+                                        <g class="price-action">
+                                            <line x1="180" y1="140" x2="180" y2="210" stroke="#888" stroke-width="2"/>
+                                            <rect x="170" y="150" width="20" height="50" fill="#e74c3c"/>
+                                            
+                                            <line x1="220" y1="170" x2="220" y2="230" stroke="#888" stroke-width="2"/>
+                                            <rect x="210" y="180" width="20" height="40" fill="#2ecc71"/>
+                                            
+                                            <line x1="280" y1="155" x2="280" y2="200" stroke="#888" stroke-width="2"/>
+                                            <rect x="270" y="160" width="20" height="35" fill="#e74c3c"/>
+                                            
+                                            <line x1="320" y1="165" x2="320" y2="220" stroke="#888" stroke-width="2"/>
+                                            <rect x="310" y="175" width="20" height="35" fill="#2ecc71"/>
+                                        </g>
+                                        
+                                        <!-- Equal Lows -->
+                                        <g class="equal-lows">
+                                            <line x1="120" y1="250" x2="120" y2="300" stroke="#888" stroke-width="2"/>
+                                            <rect x="110" y="255" width="20" height="40" fill="#e74c3c"/>
+                                            
+                                            <line x1="200" y1="245" x2="200" y2="300" stroke="#888" stroke-width="2"/>
+                                            <rect x="190" y="252" width="20" height="42" fill="#e74c3c"/>
+                                            
+                                            <line x1="300" y1="248" x2="300" y2="300" stroke="#888" stroke-width="2"/>
+                                            <rect x="290" y="254" width="20" height="40" fill="#e74c3c"/>
+                                            
+                                            <line x1="80" y1="300" x2="350" y2="300" stroke="#f39c12" stroke-width="1" stroke-dasharray="3,3"/>
+                                            <text x="370" y="305" fill="#f39c12" font-size="11">Equal Lows = Liquidity!</text>
+                                        </g>
+                                        
+                                        <!-- Sell Side Liquidity Zone -->
+                                        <rect x="50" y="320" width="500" height="30" fill="rgba(231, 76, 60, 0.2)"/>
+                                        <line x1="50" y1="320" x2="550" y2="320" stroke="#e74c3c" stroke-width="2" stroke-dasharray="5,5"/>
+                                        <text x="300" y="340" fill="#e74c3c" text-anchor="middle" font-size="14" font-weight="bold">Sell Side Liquidity (SSL)</text>
+                                        <text x="300" y="355" fill="#e74c3c" text-anchor="middle" font-size="10">Stop losses from longs / Sell stops</text>
+                                        
+                                        <!-- Liquidity Sweep Example -->
+                                        <g class="liquidity-sweep">
+                                            <path d="M 420 200 Q 450 150 470 90 Q 490 60 500 70" fill="none" stroke="#f39c12" stroke-width="2"/>
+                                            <line x1="500" y1="50" x2="500" y2="120" stroke="#888" stroke-width="2"/>
+                                            <rect x="490" y="55" width="20" height="60" fill="#2ecc71"/>
+                                            <text x="530" y="70" fill="#f39c12" font-size="11">Sweep!</text>
+                                            
+                                            <!-- Reversal after sweep -->
+                                            <line x1="540" y1="90" x2="540" y2="180" stroke="#888" stroke-width="2"/>
+                                            <rect x="530" y="95" width="20" height="75" fill="#e74c3c"/>
+                                        </g>
+                                    </svg>
+                                    <div class="visualization-note mt-3">
+                                        <p class="mb-2"><strong>📌 Key Points:</strong></p>
+                                        <ul>
+                                            <li>Liquidity pools form where stop losses cluster</li>
+                                            <li>Equal highs/lows are prime liquidity targets</li>
+                                            <li>Smart money sweeps liquidity before reversing</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    {% elif concept_id == 'premium_discount' %}
+                                    <!-- Premium/Discount Visualization -->
+                                    <svg viewBox="0 0 600 400" class="concept-svg">
+                                        <rect width="600" height="400" fill="#1a1a2e"/>
+                                        
+                                        <!-- Swing High -->
+                                        <line x1="100" y1="80" x2="500" y2="80" stroke="#2ecc71" stroke-width="2"/>
+                                        <text x="520" y="85" fill="#2ecc71" font-size="12">Swing High</text>
+                                        
+                                        <!-- Premium Zone -->
+                                        <rect x="100" y="80" width="400" height="110" fill="rgba(231, 76, 60, 0.2)"/>
+                                        <text x="300" y="130" fill="#e74c3c" text-anchor="middle" font-size="16" font-weight="bold">PREMIUM ZONE</text>
+                                        <text x="300" y="150" fill="#e74c3c" text-anchor="middle" font-size="12">(Expensive - Look for Shorts)</text>
+                                        
+                                        <!-- Equilibrium -->
+                                        <line x1="100" y1="190" x2="500" y2="190" stroke="#f39c12" stroke-width="3"/>
+                                        <text x="520" y="195" fill="#f39c12" font-size="12">50% (EQ)</text>
+                                        <text x="50" y="195" fill="#f39c12" font-size="12">Equilibrium</text>
+                                        
+                                        <!-- Discount Zone -->
+                                        <rect x="100" y="190" width="400" height="110" fill="rgba(46, 204, 113, 0.2)"/>
+                                        <text x="300" y="240" fill="#2ecc71" text-anchor="middle" font-size="16" font-weight="bold">DISCOUNT ZONE</text>
+                                        <text x="300" y="260" fill="#2ecc71" text-anchor="middle" font-size="12">(Cheap - Look for Longs)</text>
+                                        
+                                        <!-- Swing Low -->
+                                        <line x1="100" y1="300" x2="500" y2="300" stroke="#e74c3c" stroke-width="2"/>
+                                        <text x="520" y="305" fill="#e74c3c" font-size="12">Swing Low</text>
+                                        
+                                        <!-- Fibonacci Levels -->
+                                        <g class="fib-levels" font-size="10" fill="#888">
+                                            <line x1="100" y1="102" x2="500" y2="102" stroke="#888" stroke-width="1" stroke-dasharray="2,2"/>
+                                            <text x="60" y="106">0.9</text>
+                                            
+                                            <line x1="100" y1="124" x2="500" y2="124" stroke="#888" stroke-width="1" stroke-dasharray="2,2"/>
+                                            <text x="60" y="128">0.79</text>
+                                            
+                                            <line x1="100" y1="146" x2="500" y2="146" stroke="#888" stroke-width="1" stroke-dasharray="2,2"/>
+                                            <text x="60" y="150">0.62</text>
+                                            
+                                            <line x1="100" y1="234" x2="500" y2="234" stroke="#888" stroke-width="1" stroke-dasharray="2,2"/>
+                                            <text x="60" y="238">0.38</text>
+                                            
+                                            <line x1="100" y1="256" x2="500" y2="256" stroke="#888" stroke-width="1" stroke-dasharray="2,2"/>
+                                            <text x="60" y="260">0.21</text>
+                                            
+                                            <line x1="100" y1="278" x2="500" y2="278" stroke="#888" stroke-width="1" stroke-dasharray="2,2"/>
+                                            <text x="60" y="282">0.1</text>
+                                        </g>
+                                        
+                                        <!-- OTE Zone highlight -->
+                                        <rect x="100" y="124" width="400" height="22" fill="rgba(243, 156, 18, 0.3)" stroke="#f39c12" stroke-width="1"/>
+                                        <text x="520" y="140" fill="#f39c12" font-size="10">OTE Zone</text>
+                                        
+                                        <!-- Price action example -->
+                                        <g class="price-example">
+                                            <path d="M 150 300 L 180 280 L 210 290 L 250 240 L 290 260 L 330 220 L 370 190 L 410 130 L 450 80" fill="none" stroke="#3498db" stroke-width="2"/>
+                                            <circle cx="250" cy="240" r="6" fill="#2ecc71" stroke="#fff" stroke-width="2"/>
+                                            <text x="255" y="225" fill="#2ecc71" font-size="10">Buy Here!</text>
+                                        </g>
+                                        
+                                        <!-- Legend -->
+                                        <text x="300" y="350" fill="#fff" text-anchor="middle" font-size="11">
+                                            Smart money buys in Discount and sells in Premium
+                                        </text>
+                                    </svg>
+                                    <div class="visualization-note mt-3">
+                                        <p class="mb-2"><strong>📌 Key Points:</strong></p>
+                                        <ul>
+                                            <li>Any range can be divided into Premium (above 50%) and Discount (below 50%)</li>
+                                            <li>Look for longs ONLY in discount zones for better R:R</li>
+                                            <li>The OTE zone (62%-79%) offers optimal entries</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    {% else %}
+                                    <!-- Default visualization placeholder -->
+                                    <div class="visualization-placeholder text-center py-5">
+                                        <i class="fas fa-chart-line fa-5x text-muted mb-3"></i>
+                                        <p class="text-muted">Detailed visualization for {{ concept.name }}</p>
+                                        <p>{{ concept.image_description }}</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- How to Identify -->
+                        <div class="content-card mb-4">
+                            <h3 class="card-title">
+                                <i class="fas fa-search text-warning me-2"></i>
+                                How to Identify {{ concept.short_name }}
+                            </h3>
+                            <div class="card-body">
+                                <ol class="identification-list">
+                                    {% for item in concept.how_to_identify %}
+                                    <li>{{ item }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                        </div>
+
+                        <!-- Trading Rules -->
+                        <div class="content-card mb-4">
+                            <h3 class="card-title">
+                                <i class="fas fa-gavel text-danger me-2"></i>
+                                Trading Rules
+                            </h3>
+                            <div class="card-body">
+                                <ul class="trading-rules-list">
+                                    {% for rule in concept.trading_rules %}
+                                    <li><i class="fas fa-check-circle text-success me-2"></i>{{ rule }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="col-lg-4">
+                        <!-- Quick Facts Card -->
+                        <div class="sidebar-card mb-4">
+                            <h5><i class="fas fa-bolt me-2"></i>Quick Facts</h5>
+                            <ul class="quick-facts-list">
+                                <li><strong>Short Name:</strong> {{ concept.short_name }}</li>
+                                <li><strong>Category:</strong> {{ concept.category }}</li>
+                                <li><strong>Difficulty:</strong> {{ concept.difficulty }}</li>
+                            </ul>
+                        </div>
+
+                        <!-- Related Concepts -->
+                        <div class="sidebar-card mb-4">
+                            <h5><i class="fas fa-link me-2"></i>Related Concepts</h5>
+                            <ul class="related-list">
+                                {% if concept_id != 'fvg' %}
+                                <li><a href="/concept/fvg">Fair Value Gap (FVG)</a></li>
+                                {% endif %}
+                                {% if concept_id != 'bos' %}
+                                <li><a href="/concept/bos">Break of Structure (BOS)</a></li>
+                                {% endif %}
+                                {% if concept_id != 'order_blocks' %}
+                                <li><a href="/concept/order_blocks">Order Blocks</a></li>
+                                {% endif %}
+                                {% if concept_id != 'liquidity' %}
+                                <li><a href="/concept/liquidity">Liquidity</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+
+                        <!-- Practice Section -->
+                        <div class="sidebar-card mb-4 bg-primary text-white">
+                            <h5><i class="fas fa-dumbbell me-2"></i>Practice</h5>
+                            <p>Test your understanding with our interactive quiz!</p>
+                            <a href="/quiz/{{ concept_id }}" class="btn btn-light btn-sm">
+                                <i class="fas fa-question-circle me-1"></i>Take Quiz
+                            </a>
+                            <a href="/chart" class="btn btn-outline-light btn-sm ms-2">
+                                <i class="fas fa-chart-line me-1"></i>Live Chart
+                            </a>
+                        </div>
+
+                        <!-- Tips Card -->
+                        <div class="sidebar-card tips-card">
+                            <h5><i class="fas fa-lightbulb me-2"></i>Pro Tips</h5>
+                            <div class="tip-item">
+                                <p>💡 Always combine {{ concept.short_name }} with higher timeframe analysis for better accuracy.</p>
+                            </div>
+                            <div class="tip-item">
+                                <p>⚠️ Wait for confirmation before entering trades based on {{ concept.short_name }}.</p>
+                            </div>
+                            <div class="tip-item">
+                                <p>📊 Practice identifying {{ concept.short_name }} on historical charts before trading live.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <section class="py-4 bg-light">
+            <div class="container">
+                <div class="d-flex justify-content-between">
+                    <a href="/" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to All Concepts
+                    </a>
+                    <a href="/chart" class="btn btn-primary">
+                        <i class="fas fa-chart-line me-2"></i>Practice on Live Chart
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer py-4 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0 text-muted">
+                        &copy; 2024 ICT Trading Academy - Educational Forex Learning Tool
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

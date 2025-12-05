@@ -1,0 +1,874 @@
+/* ICT Trading Academy - Custom Styles */
+
+/* =====================
+   Variables & Base
+   ===================== */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --success-color: #2ecc71;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --dark-bg: #1a1a2e;
+    --card-bg: #16213e;
+    --text-light: #ecf0f1;
+    --text-muted: #95a5a6;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    padding-top: 70px;
+}
+
+/* =====================
+   Navigation
+   ===================== */
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.navbar-dark {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+}
+
+/* =====================
+   Hero Section
+   ===================== */
+.hero-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 50%, #16213e 100%);
+    padding: 100px 0;
+    margin-top: -70px;
+    padding-top: 170px;
+}
+
+.hero-chart-placeholder {
+    width: 100%;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+}
+
+.hero-chart-placeholder i {
+    font-size: 5rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* =====================
+   Stats Section
+   ===================== */
+.stat-item i {
+    font-size: 2rem;
+}
+
+.stat-item h3 {
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+/* =====================
+   Concept Cards
+   ===================== */
+.concept-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.concept-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.concept-header {
+    padding: 20px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    position: relative;
+}
+
+.concept-badge {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.concept-title {
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.concept-short {
+    font-size: 2rem;
+    font-weight: 800;
+    opacity: 0.3;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.concept-body {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.concept-description {
+    color: #666;
+    line-height: 1.6;
+}
+
+.concept-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+}
+
+/* =====================
+   Learning Path Timeline
+   ===================== */
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #3498db, #2ecc71, #f39c12, #9b59b6, #e74c3c);
+    border-radius: 2px;
+}
+
+.timeline-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.timeline-marker {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    z-index: 1;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.timeline-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-left: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    max-width: 400px;
+}
+
+.timeline-content h5 {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* =====================
+   Concept Detail Page
+   ===================== */
+.concept-detail-page {
+    background-color: #f8f9fa;
+}
+
+.breadcrumb-section {
+    padding-top: 70px;
+}
+
+.breadcrumb-item a {
+    color: var(--text-muted);
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: var(--text-light);
+}
+
+.concept-header-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 50%, #16213e 100%);
+    padding: 60px 0;
+}
+
+.concept-icon-large {
+    width: 150px;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.badge-short {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+}
+
+/* Content Cards */
+.content-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.content-card .card-title {
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eee;
+}
+
+.concept-full-description {
+    white-space: pre-line;
+    line-height: 1.8;
+    color: #555;
+}
+
+/* Visualization */
+.chart-visualization {
+    background: var(--dark-bg);
+    border-radius: 10px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.concept-svg {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+}
+
+.visualization-note {
+    background: rgba(52, 152, 219, 0.1);
+    border-left: 4px solid var(--primary-color);
+    padding: 15px;
+    border-radius: 0 10px 10px 0;
+}
+
+.visualization-placeholder {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 40px;
+}
+
+/* Lists */
+.identification-list {
+    padding-left: 20px;
+}
+
+.identification-list li {
+    margin-bottom: 12px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.trading-rules-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.trading-rules-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.trading-rules-list li:last-child {
+    border-bottom: none;
+}
+
+/* Sidebar Cards */
+.sidebar-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-card h5 {
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.quick-facts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.quick-facts-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.quick-facts-list li:last-child {
+    border-bottom: none;
+}
+
+.related-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.related-list li {
+    padding: 8px 0;
+}
+
+.related-list li a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.related-list li a:hover {
+    text-decoration: underline;
+}
+
+.tips-card {
+    background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%);
+    border: 1px solid #f39c12;
+}
+
+.tip-item {
+    padding: 10px 0;
+    border-bottom: 1px dashed #f39c12;
+}
+
+.tip-item:last-child {
+    border-bottom: none;
+}
+
+/* =====================
+   Chart Page
+   ===================== */
+.chart-page {
+    padding-top: 70px;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.chart-container {
+    height: calc(100vh - 70px);
+    padding: 0;
+}
+
+.chart-header {
+    background: var(--dark-bg);
+    color: white;
+    padding: 15px 20px !important;
+}
+
+.concepts-sidebar {
+    background: #1a1a2e;
+    color: white;
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+    padding: 0 !important;
+}
+
+.sidebar-header {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px 20px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-section {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-title {
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+/* Concept Reference */
+.concept-reference .concept-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.concept-reference .concept-item:last-child {
+    border-bottom: none;
+}
+
+.concept-reference .concept-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.concept-reference .concept-info strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+}
+
+.concept-reference .concept-info p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Session Info */
+.session-info .session-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.session-info .session-item.active-session {
+    background: rgba(46, 204, 113, 0.2);
+    border: 1px solid rgba(46, 204, 113, 0.5);
+}
+
+.session-name {
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.session-time {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* Checklist */
+.checklist .checklist-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.checklist .checklist-item input {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.checklist .checklist-item:hover {
+    color: var(--primary-color);
+}
+
+/* Symbol Buttons */
+.symbol-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.symbol-btn {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+}
+
+.symbol-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Tips */
+.tips-list {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.tips-list li {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+/* =====================
+   Quiz Page
+   ===================== */
+.quiz-page {
+    padding-top: 100px;
+    min-height: 100vh;
+}
+
+.quiz-progress .progress {
+    background: #e9ecef;
+    border-radius: 10px;
+}
+
+.question-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.question-number {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.question-text {
+    font-weight: 600;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.option-item:hover {
+    border-color: var(--primary-color);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.option-item input {
+    display: none;
+}
+
+.option-item input:checked + .option-letter {
+    background: var(--primary-color);
+    color: white;
+}
+
+.option-item.correct {
+    border-color: var(--success-color);
+    background: rgba(46, 204, 113, 0.1);
+}
+
+.option-item.incorrect {
+    border-color: var(--danger-color);
+    background: rgba(231, 76, 60, 0.1);
+}
+
+.option-letter {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.option-text {
+    flex-grow: 1;
+}
+
+.explanation-box {
+    background: rgba(52, 152, 219, 0.1);
+    border-left: 4px solid var(--primary-color);
+    padding: 15px;
+    border-radius: 0 10px 10px 0;
+    margin-top: 20px;
+}
+
+/* Results */
+.results-card {
+    background: white;
+    border-radius: 15px;
+    padding: 50px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.score-display {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+/* =====================
+   Practice Page
+   ===================== */
+.practice-page {
+    padding-top: 100px;
+}
+
+.practice-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.practice-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.practice-icon i {
+    font-size: 2rem;
+    color: white;
+}
+
+.practice-card h4 {
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.practice-features {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    margin: 20px 0;
+}
+
+.practice-features li {
+    padding: 8px 0;
+}
+
+.quiz-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+/* Exercise Cards */
+.exercise-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.exercise-header {
+    background: var(--dark-bg);
+    color: white;
+    padding: 20px;
+}
+
+.exercise-header h5 {
+    margin: 10px 0 0;
+}
+
+.exercise-body {
+    padding: 20px;
+}
+
+.exercise-chart {
+    background: var(--dark-bg);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.exercise-svg {
+    width: 100%;
+    height: auto;
+}
+
+.exercise-instruction {
+    color: #666;
+    font-style: italic;
+}
+
+/* Progress Tracker */
+.progress-tracker-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.progress-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.progress-item:last-child {
+    border-bottom: none;
+}
+
+.progress-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.concept-name {
+    font-weight: 600;
+}
+
+.progress-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Tip Cards */
+.tip-card {
+    padding: 30px 20px;
+}
+
+.tip-icon {
+    margin-bottom: 20px;
+}
+
+.tip-card h5 {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* =====================
+   Footer
+   ===================== */
+.footer {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+/* =====================
+   Animations
+   ===================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.concept-card,
+.practice-card,
+.exercise-card,
+.content-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* SVG Animations */
+.concept-svg .fvg-zone,
+.concept-svg .ob-zone {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* =====================
+   Responsive
+   ===================== */
+@media (max-width: 991px) {
+    .timeline::before {
+        left: 25px;
+    }
+    
+    .timeline-item {
+        justify-content: flex-start;
+        padding-left: 0;
+    }
+    
+    .timeline-content {
+        margin-left: 15px;
+    }
+    
+    .concepts-sidebar {
+        height: auto;
+        max-height: 50vh;
+    }
+    
+    .chart-container {
+        height: 50vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 60px 0;
+        padding-top: 130px;
+    }
+    
+    .concept-icon-large {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .badge-short {
+        font-size: 1.5rem;
+    }
+    
+    .question-card {
+        padding: 20px;
+    }
+    
+    .results-card {
+        padding: 30px;
+    }
+    
+    .score-display {
+        font-size: 2rem;
+    }
+}

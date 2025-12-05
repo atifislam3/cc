@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICT Trading Concepts - Learn Forex Trading</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line me-2"></i>ICT Trading Academy
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/chart">
+                            <i class="fas fa-chart-candlestick me-1"></i>Live Chart
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/practice">
+                            <i class="fas fa-dumbbell me-1"></i>Practice
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold text-white mb-4">
+                        Master ICT Trading Concepts
+                    </h1>
+                    <p class="lead text-white-50 mb-4">
+                        Learn Inner Circle Trader (ICT) methodology with interactive visualizations, 
+                        real-time charts, and practical exercises. Understand FVG, BOS, CHoCH, Order Blocks, 
+                        and more.
+                    </p>
+                    <a href="#concepts" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-book-open me-2"></i>Start Learning
+                    </a>
+                    <a href="/chart" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-chart-line me-2"></i>View Charts
+                    </a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-chart-placeholder">
+                        <i class="fas fa-chart-candlestick"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="stats-section py-4 bg-dark">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <i class="fas fa-book text-primary mb-2"></i>
+                        <h3 class="text-white">10+</h3>
+                        <p class="text-muted mb-0">ICT Concepts</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <i class="fas fa-image text-success mb-2"></i>
+                        <h3 class="text-white">Visual</h3>
+                        <p class="text-muted mb-0">Chart Examples</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <i class="fas fa-question-circle text-warning mb-2"></i>
+                        <h3 class="text-white">Quizzes</h3>
+                        <p class="text-muted mb-0">Test Knowledge</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <i class="fas fa-chart-bar text-info mb-2"></i>
+                        <h3 class="text-white">Live</h3>
+                        <p class="text-muted mb-0">Charts</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Concepts Section -->
+    <section id="concepts" class="concepts-section py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">ICT Trading Concepts</h2>
+                <p class="lead text-muted">Click on any concept to learn more with visual examples</p>
+            </div>
+
+            <!-- Category: Market Structure -->
+            <h4 class="text-primary mb-4">
+                <i class="fas fa-layer-group me-2"></i>Market Structure
+            </h4>
+            <div class="row g-4 mb-5">
+                {% for key, concept in concepts.items() %}
+                {% if concept.category == "Market Structure" %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="concept-card h-100">
+                        <div class="concept-header">
+                            <span class="concept-badge {{ 'bg-success' if concept.difficulty == 'Beginner' else 'bg-warning' if concept.difficulty == 'Intermediate' else 'bg-danger' }}">
+                                {{ concept.difficulty }}
+                            </span>
+                            <h5 class="concept-title">{{ concept.name }}</h5>
+                            <span class="concept-short">{{ concept.short_name }}</span>
+                        </div>
+                        <div class="concept-body">
+                            <p class="concept-description">
+                                {{ concept.description[:200] }}...
+                            </p>
+                        </div>
+                        <div class="concept-footer">
+                            <a href="/concept/{{ key }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Learn More
+                            </a>
+                            {% if key in ['bos', 'choch', 'fvg', 'order_blocks', 'liquidity'] %}
+                            <a href="/quiz/{{ key }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-question me-1"></i>Quiz
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Category: Price Action -->
+            <h4 class="text-success mb-4">
+                <i class="fas fa-chart-line me-2"></i>Price Action
+            </h4>
+            <div class="row g-4 mb-5">
+                {% for key, concept in concepts.items() %}
+                {% if concept.category == "Price Action" %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="concept-card h-100">
+                        <div class="concept-header">
+                            <span class="concept-badge {{ 'bg-success' if concept.difficulty == 'Beginner' else 'bg-warning' if concept.difficulty == 'Intermediate' else 'bg-danger' }}">
+                                {{ concept.difficulty }}
+                            </span>
+                            <h5 class="concept-title">{{ concept.name }}</h5>
+                            <span class="concept-short">{{ concept.short_name }}</span>
+                        </div>
+                        <div class="concept-body">
+                            <p class="concept-description">
+                                {{ concept.description[:200] }}...
+                            </p>
+                        </div>
+                        <div class="concept-footer">
+                            <a href="/concept/{{ key }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Learn More
+                            </a>
+                            {% if key in ['bos', 'choch', 'fvg', 'order_blocks', 'liquidity'] %}
+                            <a href="/quiz/{{ key }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-question me-1"></i>Quiz
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Category: Liquidity -->
+            <h4 class="text-warning mb-4">
+                <i class="fas fa-water me-2"></i>Liquidity Concepts
+            </h4>
+            <div class="row g-4 mb-5">
+                {% for key, concept in concepts.items() %}
+                {% if concept.category == "Liquidity" %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="concept-card h-100">
+                        <div class="concept-header">
+                            <span class="concept-badge {{ 'bg-success' if concept.difficulty == 'Beginner' else 'bg-warning' if concept.difficulty == 'Intermediate' else 'bg-danger' }}">
+                                {{ concept.difficulty }}
+                            </span>
+                            <h5 class="concept-title">{{ concept.name }}</h5>
+                            <span class="concept-short">{{ concept.short_name }}</span>
+                        </div>
+                        <div class="concept-body">
+                            <p class="concept-description">
+                                {{ concept.description[:200] }}...
+                            </p>
+                        </div>
+                        <div class="concept-footer">
+                            <a href="/concept/{{ key }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Learn More
+                            </a>
+                            {% if key in ['bos', 'choch', 'fvg', 'order_blocks', 'liquidity'] %}
+                            <a href="/quiz/{{ key }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-question me-1"></i>Quiz
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Category: Supply & Demand -->
+            <h4 class="text-info mb-4">
+                <i class="fas fa-exchange-alt me-2"></i>Supply & Demand
+            </h4>
+            <div class="row g-4 mb-5">
+                {% for key, concept in concepts.items() %}
+                {% if concept.category == "Supply & Demand" %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="concept-card h-100">
+                        <div class="concept-header">
+                            <span class="concept-badge {{ 'bg-success' if concept.difficulty == 'Beginner' else 'bg-warning' if concept.difficulty == 'Intermediate' else 'bg-danger' }}">
+                                {{ concept.difficulty }}
+                            </span>
+                            <h5 class="concept-title">{{ concept.name }}</h5>
+                            <span class="concept-short">{{ concept.short_name }}</span>
+                        </div>
+                        <div class="concept-body">
+                            <p class="concept-description">
+                                {{ concept.description[:200] }}...
+                            </p>
+                        </div>
+                        <div class="concept-footer">
+                            <a href="/concept/{{ key }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Learn More
+                            </a>
+                            {% if key in ['bos', 'choch', 'fvg', 'order_blocks', 'liquidity'] %}
+                            <a href="/quiz/{{ key }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-question me-1"></i>Quiz
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Category: Time & Price / Entry Techniques -->
+            <h4 class="text-danger mb-4">
+                <i class="fas fa-crosshairs me-2"></i>Advanced Entry Techniques
+            </h4>
+            <div class="row g-4 mb-5">
+                {% for key, concept in concepts.items() %}
+                {% if concept.category in ["Time & Price", "Entry Techniques"] %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="concept-card h-100">
+                        <div class="concept-header">
+                            <span class="concept-badge {{ 'bg-success' if concept.difficulty == 'Beginner' else 'bg-warning' if concept.difficulty == 'Intermediate' else 'bg-danger' }}">
+                                {{ concept.difficulty }}
+                            </span>
+                            <h5 class="concept-title">{{ concept.name }}</h5>
+                            <span class="concept-short">{{ concept.short_name }}</span>
+                        </div>
+                        <div class="concept-body">
+                            <p class="concept-description">
+                                {{ concept.description[:200] }}...
+                            </p>
+                        </div>
+                        <div class="concept-footer">
+                            <a href="/concept/{{ key }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Path Section -->
+    <section class="learning-path py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Recommended Learning Path</h2>
+            <div class="row">
+                <div class="col-12">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success">1</div>
+                            <div class="timeline-content">
+                                <h5>Foundation</h5>
+                                <p>Start with Market Structure (BOS, CHoCH) and understand how trends form and reverse.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary">2</div>
+                            <div class="timeline-content">
+                                <h5>Price Imbalances</h5>
+                                <p>Learn about Fair Value Gaps (FVG) and how price tends to fill these imbalances.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-warning">3</div>
+                            <div class="timeline-content">
+                                <h5>Liquidity</h5>
+                                <p>Understand where stop losses cluster and how smart money hunts liquidity.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-info">4</div>
+                            <div class="timeline-content">
+                                <h5>Order Blocks</h5>
+                                <p>Identify institutional entry points and use them for your own trades.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-danger">5</div>
+                            <div class="timeline-content">
+                                <h5>Advanced Techniques</h5>
+                                <p>Master Premium/Discount zones, Kill Zones, and Optimal Trade Entry (OTE).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-chart-line me-2"></i>ICT Trading Academy</h5>
+                    <p class="text-muted">
+                        Learn Inner Circle Trader concepts with visual examples and interactive exercises.
+                        This is an educational resource for forex trading.
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-muted">Home</a></li>
+                        <li><a href="/chart" class="text-muted">Live Chart</a></li>
+                        <li><a href="/practice" class="text-muted">Practice</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6>Disclaimer</h6>
+                    <p class="text-muted small">
+                        Trading involves risk. This content is for educational purposes only 
+                        and should not be considered financial advice.
+                    </p>
+                </div>
+            </div>
+            <hr class="my-3">
+            <p class="text-center text-muted mb-0">
+                &copy; 2024 ICT Trading Academy - Educational Forex Learning Tool
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

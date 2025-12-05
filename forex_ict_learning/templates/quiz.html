@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ concept.name }} Quiz - ICT Trading Academy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line me-2"></i>ICT Trading Academy
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/chart">
+                            <i class="fas fa-chart-candlestick me-1"></i>Live Chart
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/practice">
+                            <i class="fas fa-dumbbell me-1"></i>Practice
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="quiz-page py-5">
+        <div class="container">
+            <!-- Quiz Header -->
+            <div class="quiz-header text-center mb-5">
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-question-circle text-primary me-3"></i>
+                    {{ concept.name }} Quiz
+                </h1>
+                <p class="lead text-muted">Test your understanding of {{ concept.short_name }}</p>
+            </div>
+
+            {% if questions %}
+            <!-- Quiz Container -->
+            <div class="quiz-container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <!-- Progress Bar -->
+                        <div class="quiz-progress mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Question <span id="currentQuestion">1</span> of {{ questions|length }}</span>
+                                <span>Score: <span id="score">0</span></span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" id="progressBar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Questions -->
+                        <div id="quizQuestions">
+                            {% for question in questions %}
+                            <div class="question-card {% if not loop.first %}d-none{% endif %}" data-question="{{ loop.index0 }}">
+                                <div class="question-number">Question {{ loop.index }}</div>
+                                <h4 class="question-text">{{ question.question }}</h4>
+                                
+                                <div class="options-list">
+                                    {% for option in question.options %}
+                                    <label class="option-item" data-correct="{{ loop.index0 == question.correct }}">
+                                        <input type="radio" name="question{{ loop.index0 }}" value="{{ loop.index0 }}">
+                                        <span class="option-letter">{{ ['A', 'B', 'C', 'D'][loop.index0] }}</span>
+                                        <span class="option-text">{{ option }}</span>
+                                        <span class="option-feedback"></span>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="explanation-box d-none">
+                                    <div class="explanation-content">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Explanation:</strong> {{ question.explanation }}
+                                    </div>
+                                </div>
+
+                                <div class="question-actions mt-4">
+                                    <button class="btn btn-primary check-answer-btn" disabled>
+                                        <i class="fas fa-check me-2"></i>Check Answer
+                                    </button>
+                                    <button class="btn btn-success next-question-btn d-none">
+                                        {% if loop.last %}
+                                        <i class="fas fa-trophy me-2"></i>See Results
+                                        {% else %}
+                                        <i class="fas fa-arrow-right me-2"></i>Next Question
+                                        {% endif %}
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Results Section -->
+                        <div id="quizResults" class="d-none">
+                            <div class="results-card text-center">
+                                <div class="results-icon mb-4">
+                                    <i class="fas fa-trophy fa-5x"></i>
+                                </div>
+                                <h2 class="mb-3">Quiz Complete!</h2>
+                                <div class="score-display mb-4">
+                                    <span class="final-score">0</span> / <span>{{ questions|length }}</span>
+                                </div>
+                                <p class="score-message"></p>
+                                <div class="results-actions mt-4">
+                                    <a href="/concept/{{ concept_id }}" class="btn btn-outline-primary me-2">
+                                        <i class="fas fa-book me-2"></i>Review Concept
+                                    </a>
+                                    <button class="btn btn-primary retry-quiz-btn">
+                                        <i class="fas fa-redo me-2"></i>Try Again
+                                    </button>
+                                    <a href="/chart" class="btn btn-success ms-2">
+                                        <i class="fas fa-chart-line me-2"></i>Practice on Chart
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+            <!-- No Questions Available -->
+            <div class="no-questions text-center py-5">
+                <i class="fas fa-clipboard-question fa-5x text-muted mb-4"></i>
+                <h3>Quiz Coming Soon!</h3>
+                <p class="text-muted">We're still preparing questions for {{ concept.name }}.</p>
+                <p class="text-muted">In the meantime, study the concept and practice on the live chart.</p>
+                <div class="mt-4">
+                    <a href="/concept/{{ concept_id }}" class="btn btn-primary me-2">
+                        <i class="fas fa-book me-2"></i>Study {{ concept.short_name }}
+                    </a>
+                    <a href="/chart" class="btn btn-success">
+                        <i class="fas fa-chart-line me-2"></i>Live Chart
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Back Navigation -->
+            <div class="text-center mt-5">
+                <a href="/" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to All Concepts
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer py-4 bg-dark text-white">
+        <div class="container">
+            <p class="text-center text-muted mb-0">
+                &copy; 2024 ICT Trading Academy - Educational Forex Learning Tool
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentQuestion = 0;
+            let score = 0;
+            const totalQuestions = {{ questions|length }};
+            
+            if (totalQuestions === 0) return;
+
+            const questions = document.querySelectorAll('.question-card');
+            const progressBar = document.getElementById('progressBar');
+            const currentQuestionSpan = document.getElementById('currentQuestion');
+            const scoreSpan = document.getElementById('score');
+            const resultsSection = document.getElementById('quizResults');
+            const questionsSection = document.getElementById('quizQuestions');
+
+            // Enable check button when option is selected
+            document.querySelectorAll('.option-item input').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const questionCard = this.closest('.question-card');
+                    const checkBtn = questionCard.querySelector('.check-answer-btn');
+                    checkBtn.disabled = false;
+                });
+            });
+
+            // Check answer button
+            document.querySelectorAll('.check-answer-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const questionCard = this.closest('.question-card');
+                    const selectedOption = questionCard.querySelector('input:checked');
+                    if (!selectedOption) return;
+
+                    const selectedLabel = selectedOption.closest('.option-item');
+                    const isCorrect = selectedLabel.dataset.correct === 'true';
+                    const explanation = questionCard.querySelector('.explanation-box');
+                    const nextBtn = questionCard.querySelector('.next-question-btn');
+
+                    // Disable all options
+                    questionCard.querySelectorAll('input').forEach(input => {
+                        input.disabled = true;
+                    });
+
+                    // Show correct/incorrect
+                    questionCard.querySelectorAll('.option-item').forEach(label => {
+                        if (label.dataset.correct === 'true') {
+                            label.classList.add('correct');
+                        } else if (label === selectedLabel && !isCorrect) {
+                            label.classList.add('incorrect');
+                        }
+                    });
+
+                    // Update score
+                    if (isCorrect) {
+                        score++;
+                        scoreSpan.textContent = score;
+                    }
+
+                    // Show explanation and next button
+                    explanation.classList.remove('d-none');
+                    this.classList.add('d-none');
+                    nextBtn.classList.remove('d-none');
+                });
+            });
+
+            // Next question button
+            document.querySelectorAll('.next-question-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currentQuestion++;
+                    
+                    if (currentQuestion >= totalQuestions) {
+                        // Show results
+                        questionsSection.classList.add('d-none');
+                        resultsSection.classList.remove('d-none');
+                        
+                        const percentage = (score / totalQuestions) * 100;
+                        document.querySelector('.final-score').textContent = score;
+                        
+                        const messageEl = document.querySelector('.score-message');
+                        const iconEl = document.querySelector('.results-icon i');
+                        
+                        if (percentage >= 80) {
+                            messageEl.textContent = 'Excellent! You have a great understanding of this concept!';
+                            messageEl.className = 'score-message text-success';
+                            iconEl.className = 'fas fa-trophy fa-5x text-warning';
+                        } else if (percentage >= 60) {
+                            messageEl.textContent = 'Good job! Review the concept to improve further.';
+                            messageEl.className = 'score-message text-primary';
+                            iconEl.className = 'fas fa-medal fa-5x text-primary';
+                        } else {
+                            messageEl.textContent = 'Keep studying! Review the concept and try again.';
+                            messageEl.className = 'score-message text-warning';
+                            iconEl.className = 'fas fa-book-reader fa-5x text-info';
+                        }
+                    } else {
+                        // Show next question
+                        questions.forEach((q, i) => {
+                            if (i === currentQuestion) {
+                                q.classList.remove('d-none');
+                            } else {
+                                q.classList.add('d-none');
+                            }
+                        });
+                        
+                        currentQuestionSpan.textContent = currentQuestion + 1;
+                        progressBar.style.width = ((currentQuestion + 1) / totalQuestions * 100) + '%';
+                    }
+                });
+            });
+
+            // Retry quiz button
+            document.querySelector('.retry-quiz-btn')?.addEventListener('click', function() {
+                location.reload();
+            });
+        });
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Area - ICT Trading Academy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line me-2"></i>ICT Trading Academy
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/chart">
+                            <i class="fas fa-chart-candlestick me-1"></i>Live Chart
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/practice">
+                            <i class="fas fa-dumbbell me-1"></i>Practice
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="practice-page py-5">
+        <div class="container">
+            <!-- Header -->
+            <div class="page-header text-center mb-5">
+                <h1 class="display-4 fw-bold">
+                    <i class="fas fa-dumbbell text-primary me-3"></i>Practice Area
+                </h1>
+                <p class="lead text-muted">Test your knowledge and improve your ICT trading skills</p>
+            </div>
+
+            <!-- Practice Modes -->
+            <div class="row g-4 mb-5">
+                <!-- Live Chart Practice -->
+                <div class="col-lg-4">
+                    <div class="practice-card h-100">
+                        <div class="practice-icon bg-primary">
+                            <i class="fas fa-chart-candlestick"></i>
+                        </div>
+                        <h4>Live Chart Analysis</h4>
+                        <p>Practice identifying ICT concepts on real-time trading charts with our TradingView integration.</p>
+                        <ul class="practice-features">
+                            <li><i class="fas fa-check text-success me-2"></i>Real-time market data</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Multiple timeframes</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Drawing tools included</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Major forex pairs</li>
+                        </ul>
+                        <a href="/chart" class="btn btn-primary mt-3">
+                            <i class="fas fa-arrow-right me-2"></i>Go to Live Chart
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Concept Quizzes -->
+                <div class="col-lg-4">
+                    <div class="practice-card h-100">
+                        <div class="practice-icon bg-success">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h4>Concept Quizzes</h4>
+                        <p>Test your theoretical understanding of each ICT concept with interactive quizzes.</p>
+                        <ul class="practice-features">
+                            <li><i class="fas fa-check text-success me-2"></i>Multiple choice questions</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Instant feedback</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Detailed explanations</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Track your progress</li>
+                        </ul>
+                        <div class="quiz-buttons mt-3">
+                            <a href="/quiz/fvg" class="btn btn-sm btn-outline-success">FVG Quiz</a>
+                            <a href="/quiz/bos" class="btn btn-sm btn-outline-success">BOS Quiz</a>
+                            <a href="/quiz/liquidity" class="btn btn-sm btn-outline-success">Liquidity Quiz</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Study Materials -->
+                <div class="col-lg-4">
+                    <div class="practice-card h-100">
+                        <div class="practice-icon bg-warning">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h4>Study Materials</h4>
+                        <p>Deep dive into each ICT concept with detailed explanations and visual diagrams.</p>
+                        <ul class="practice-features">
+                            <li><i class="fas fa-check text-success me-2"></i>Visual explanations</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Step-by-step guides</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Trading rules</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Pro tips</li>
+                        </ul>
+                        <a href="/#concepts" class="btn btn-warning mt-3">
+                            <i class="fas fa-arrow-right me-2"></i>Browse Concepts
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Exercises Section -->
+            <section class="exercises-section py-5">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-tasks text-info me-2"></i>Interactive Exercises
+                </h2>
+                
+                <div class="row g-4">
+                    <!-- Exercise 1: Identify FVG -->
+                    <div class="col-md-6">
+                        <div class="exercise-card">
+                            <div class="exercise-header">
+                                <span class="badge bg-success">Beginner</span>
+                                <h5>Exercise 1: Identify the FVG</h5>
+                            </div>
+                            <div class="exercise-body">
+                                <div class="exercise-chart">
+                                    <svg viewBox="0 0 400 200" class="exercise-svg">
+                                        <rect width="400" height="200" fill="#1a1a2e"/>
+                                        <!-- Candles -->
+                                        <g class="candle c1">
+                                            <line x1="80" y1="160" x2="80" y2="80" stroke="#888" stroke-width="2"/>
+                                            <rect x="65" y="100" width="30" height="50" fill="#e74c3c"/>
+                                        </g>
+                                        <g class="candle c2">
+                                            <line x1="200" y1="110" x2="200" y2="30" stroke="#888" stroke-width="2"/>
+                                            <rect x="185" y="40" width="30" height="60" fill="#2ecc71"/>
+                                        </g>
+                                        <g class="candle c3">
+                                            <line x1="320" y1="80" x2="320" y2="25" stroke="#888" stroke-width="2"/>
+                                            <rect x="305" y="30" width="30" height="45" fill="#2ecc71"/>
+                                        </g>
+                                        <!-- Click areas -->
+                                        <rect id="fvg-area-1" x="65" y="75" width="270" height="20" fill="transparent" stroke="transparent" class="clickable-area" data-correct="true"/>
+                                        <rect id="fvg-area-2" x="185" y="100" width="150" height="20" fill="transparent" stroke="transparent" class="clickable-area" data-correct="false"/>
+                                    </svg>
+                                </div>
+                                <p class="exercise-instruction">Click on the area that represents the Fair Value Gap</p>
+                                <div class="exercise-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exercise 2: Identify BOS -->
+                    <div class="col-md-6">
+                        <div class="exercise-card">
+                            <div class="exercise-header">
+                                <span class="badge bg-success">Beginner</span>
+                                <h5>Exercise 2: Identify the BOS</h5>
+                            </div>
+                            <div class="exercise-body">
+                                <div class="exercise-chart">
+                                    <svg viewBox="0 0 400 200" class="exercise-svg">
+                                        <rect width="400" height="200" fill="#1a1a2e"/>
+                                        <!-- Structure -->
+                                        <line x1="30" y1="100" x2="370" y2="100" stroke="#3498db" stroke-width="1" stroke-dasharray="5,5"/>
+                                        <text x="50" y="95" fill="#3498db" font-size="10">Swing High</text>
+                                        
+                                        <!-- Candles showing BOS -->
+                                        <g class="candle">
+                                            <rect x="50" y="120" width="20" height="40" fill="#2ecc71"/>
+                                        </g>
+                                        <g class="candle">
+                                            <rect x="90" y="105" width="20" height="50" fill="#2ecc71"/>
+                                        </g>
+                                        <g class="candle">
+                                            <rect x="130" y="130" width="20" height="35" fill="#e74c3c"/>
+                                        </g>
+                                        <g class="candle">
+                                            <rect x="170" y="110" width="20" height="45" fill="#2ecc71"/>
+                                        </g>
+                                        <g class="candle bos-candle" id="bos-candle">
+                                            <rect x="210" y="70" width="20" height="55" fill="#2ecc71"/>
+                                        </g>
+                                        <g class="candle">
+                                            <rect x="250" y="60" width="20" height="45" fill="#2ecc71"/>
+                                        </g>
+                                        <g class="candle">
+                                            <rect x="290" y="50" width="20" height="50" fill="#2ecc71"/>
+                                        </g>
+                                        
+                                        <!-- Click areas -->
+                                        <rect id="bos-area-1" x="205" y="65" width="30" height="65" fill="transparent" stroke="transparent" class="clickable-area-bos" data-correct="true"/>
+                                        <rect id="bos-area-2" x="85" y="100" width="30" height="60" fill="transparent" stroke="transparent" class="clickable-area-bos" data-correct="false"/>
+                                        <rect id="bos-area-3" x="165" y="105" width="30" height="55" fill="transparent" stroke="transparent" class="clickable-area-bos" data-correct="false"/>
+                                    </svg>
+                                </div>
+                                <p class="exercise-instruction">Click on the candle that breaks structure (BOS)</p>
+                                <div class="exercise-feedback-bos"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Tracker -->
+            <section class="progress-section py-5">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-chart-bar text-success me-2"></i>Your Learning Progress
+                </h2>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="progress-tracker-card">
+                            {% for key, concept in concepts.items() %}
+                            <div class="progress-item">
+                                <div class="progress-info">
+                                    <span class="concept-name">{{ concept.name }}</span>
+                                    <span class="badge {{ 'bg-success' if concept.difficulty == 'Beginner' else 'bg-warning' if concept.difficulty == 'Intermediate' else 'bg-danger' }}">
+                                        {{ concept.difficulty }}
+                                    </span>
+                                </div>
+                                <div class="progress-actions">
+                                    <a href="/concept/{{ key }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-book"></i> Study
+                                    </a>
+                                    {% if key in ['fvg', 'bos', 'choch', 'order_blocks', 'liquidity'] %}
+                                    <a href="/quiz/{{ key }}" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-question"></i> Quiz
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tips Section -->
+            <section class="tips-section py-5 bg-light rounded">
+                <div class="container">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>Practice Tips for Success
+                    </h2>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="tip-card text-center">
+                                <div class="tip-icon">
+                                    <i class="fas fa-calendar-check fa-3x text-primary"></i>
+                                </div>
+                                <h5>Consistency is Key</h5>
+                                <p>Spend at least 30 minutes daily analyzing charts and reviewing concepts.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="tip-card text-center">
+                                <div class="tip-icon">
+                                    <i class="fas fa-history fa-3x text-success"></i>
+                                </div>
+                                <h5>Use Historical Data</h5>
+                                <p>Scroll back on charts and practice identifying setups on historical price action.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="tip-card text-center">
+                                <div class="tip-icon">
+                                    <i class="fas fa-journal-whills fa-3x text-warning"></i>
+                                </div>
+                                <h5>Keep a Journal</h5>
+                                <p>Document your analysis and review your decisions to improve faster.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer py-4 bg-dark text-white">
+        <div class="container">
+            <p class="text-center text-muted mb-0">
+                &copy; 2024 ICT Trading Academy - Educational Forex Learning Tool
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Interactive Exercise Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            // FVG Exercise
+            document.querySelectorAll('.clickable-area').forEach(area => {
+                area.style.cursor = 'pointer';
+                area.addEventListener('click', function() {
+                    const feedback = document.querySelector('.exercise-feedback');
+                    const isCorrect = this.dataset.correct === 'true';
+                    
+                    if (isCorrect) {
+                        this.setAttribute('fill', 'rgba(46, 204, 113, 0.3)');
+                        this.setAttribute('stroke', '#2ecc71');
+                        this.setAttribute('stroke-width', '2');
+                        feedback.innerHTML = '<div class="alert alert-success mt-3"><i class="fas fa-check-circle me-2"></i>Correct! This is the Fair Value Gap - the area between Candle 1\'s high and Candle 3\'s low.</div>';
+                    } else {
+                        this.setAttribute('fill', 'rgba(231, 76, 60, 0.3)');
+                        this.setAttribute('stroke', '#e74c3c');
+                        this.setAttribute('stroke-width', '2');
+                        feedback.innerHTML = '<div class="alert alert-danger mt-3"><i class="fas fa-times-circle me-2"></i>Not quite. Look for the gap between Candle 1 and Candle 3 wicks.</div>';
+                    }
+                });
+            });
+
+            // BOS Exercise
+            document.querySelectorAll('.clickable-area-bos').forEach(area => {
+                area.style.cursor = 'pointer';
+                area.addEventListener('click', function() {
+                    const feedback = document.querySelector('.exercise-feedback-bos');
+                    const isCorrect = this.dataset.correct === 'true';
+                    
+                    if (isCorrect) {
+                        this.setAttribute('fill', 'rgba(46, 204, 113, 0.3)');
+                        this.setAttribute('stroke', '#2ecc71');
+                        this.setAttribute('stroke-width', '2');
+                        feedback.innerHTML = '<div class="alert alert-success mt-3"><i class="fas fa-check-circle me-2"></i>Correct! This candle breaks and closes above the previous swing high, confirming the BOS.</div>';
+                    } else {
+                        this.setAttribute('fill', 'rgba(231, 76, 60, 0.3)');
+                        this.setAttribute('stroke', '#e74c3c');
+                        this.setAttribute('stroke-width', '2');
+                        feedback.innerHTML = '<div class="alert alert-danger mt-3"><i class="fas fa-times-circle me-2"></i>Not quite. Look for the candle that breaks AND closes above the dashed line (swing high).</div>';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

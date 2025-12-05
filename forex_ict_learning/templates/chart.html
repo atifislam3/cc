@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Trading Chart - ICT Trading Academy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line me-2"></i>ICT Trading Academy
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/chart">
+                            <i class="fas fa-chart-candlestick me-1"></i>Live Chart
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/practice">
+                            <i class="fas fa-dumbbell me-1"></i>Practice
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="chart-page">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Chart Section -->
+                <div class="col-lg-9 chart-container">
+                    <div class="chart-header py-3">
+                        <h4 class="mb-0">
+                            <i class="fas fa-chart-candlestick me-2"></i>
+                            Live Trading Chart
+                        </h4>
+                        <p class="text-muted mb-0">Practice identifying ICT concepts on real-time charts</p>
+                    </div>
+                    
+                    <!-- TradingView Widget Container -->
+                    <div class="tradingview-widget-container" style="height: calc(100vh - 200px); min-height: 500px;">
+                        <div id="tradingview_chart" style="height: 100%;"></div>
+                    </div>
+                </div>
+
+                <!-- Sidebar with ICT Concepts Reference -->
+                <div class="col-lg-3 concepts-sidebar">
+                    <div class="sidebar-header py-3">
+                        <h5><i class="fas fa-book me-2"></i>Quick Reference</h5>
+                    </div>
+                    
+                    <!-- What to Look For -->
+                    <div class="sidebar-section">
+                        <h6 class="section-title">
+                            <i class="fas fa-search text-primary me-2"></i>What to Look For
+                        </h6>
+                        
+                        <div class="concept-reference">
+                            <div class="concept-item" data-concept="fvg">
+                                <div class="concept-icon bg-primary">FVG</div>
+                                <div class="concept-info">
+                                    <strong>Fair Value Gap</strong>
+                                    <p>Look for 3-candle patterns with gaps between C1 and C3 wicks</p>
+                                </div>
+                            </div>
+                            
+                            <div class="concept-item" data-concept="bos">
+                                <div class="concept-icon bg-success">BOS</div>
+                                <div class="concept-info">
+                                    <strong>Break of Structure</strong>
+                                    <p>Watch for breaks of swing highs/lows with body close</p>
+                                </div>
+                            </div>
+                            
+                            <div class="concept-item" data-concept="choch">
+                                <div class="concept-icon bg-warning">CHoCH</div>
+                                <div class="concept-info">
+                                    <strong>Change of Character</strong>
+                                    <p>First break against the current trend direction</p>
+                                </div>
+                            </div>
+                            
+                            <div class="concept-item" data-concept="ob">
+                                <div class="concept-icon bg-info">OB</div>
+                                <div class="concept-info">
+                                    <strong>Order Blocks</strong>
+                                    <p>Last opposite candle before impulsive move</p>
+                                </div>
+                            </div>
+                            
+                            <div class="concept-item" data-concept="liq">
+                                <div class="concept-icon bg-danger">LIQ</div>
+                                <div class="concept-info">
+                                    <strong>Liquidity</strong>
+                                    <p>Equal highs/lows, swing points with stop clusters</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Session Info -->
+                    <div class="sidebar-section">
+                        <h6 class="section-title">
+                            <i class="fas fa-clock text-warning me-2"></i>Trading Sessions (EST)
+                        </h6>
+                        <div class="session-info">
+                            <div class="session-item">
+                                <span class="session-name">Asian Session</span>
+                                <span class="session-time">20:00 - 00:00</span>
+                            </div>
+                            <div class="session-item">
+                                <span class="session-name">London Open</span>
+                                <span class="session-time">02:00 - 05:00</span>
+                            </div>
+                            <div class="session-item active-session">
+                                <span class="session-name">New York Open</span>
+                                <span class="session-time">07:00 - 10:00</span>
+                            </div>
+                            <div class="session-item">
+                                <span class="session-name">London Close</span>
+                                <span class="session-time">10:00 - 12:00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checklist -->
+                    <div class="sidebar-section">
+                        <h6 class="section-title">
+                            <i class="fas fa-tasks text-success me-2"></i>Analysis Checklist
+                        </h6>
+                        <div class="checklist">
+                            <label class="checklist-item">
+                                <input type="checkbox" id="check-bias">
+                                <span>Determined HTF bias</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" id="check-structure">
+                                <span>Identified market structure</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" id="check-liquidity">
+                                <span>Marked liquidity pools</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" id="check-fvg">
+                                <span>Found relevant FVGs</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" id="check-ob">
+                                <span>Identified Order Blocks</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" id="check-pd">
+                                <span>Marked Premium/Discount zones</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" id="check-session">
+                                <span>Trading in Kill Zone</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Symbol Quick Select -->
+                    <div class="sidebar-section">
+                        <h6 class="section-title">
+                            <i class="fas fa-exchange-alt text-info me-2"></i>Popular Pairs
+                        </h6>
+                        <div class="symbol-buttons">
+                            <button class="btn btn-sm btn-outline-primary symbol-btn" data-symbol="FX:EURUSD">EUR/USD</button>
+                            <button class="btn btn-sm btn-outline-primary symbol-btn" data-symbol="FX:GBPUSD">GBP/USD</button>
+                            <button class="btn btn-sm btn-outline-primary symbol-btn" data-symbol="FX:USDJPY">USD/JPY</button>
+                            <button class="btn btn-sm btn-outline-primary symbol-btn" data-symbol="FX:XAUUSD">XAU/USD</button>
+                            <button class="btn btn-sm btn-outline-primary symbol-btn" data-symbol="NASDAQ:NDX">NAS100</button>
+                            <button class="btn btn-sm btn-outline-primary symbol-btn" data-symbol="SP:SPX">SP500</button>
+                        </div>
+                    </div>
+
+                    <!-- Tips -->
+                    <div class="sidebar-section tips-section">
+                        <h6 class="section-title">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>Practice Tips
+                        </h6>
+                        <ul class="tips-list">
+                            <li>Start with higher timeframes (H4, Daily) to understand structure</li>
+                            <li>Draw horizontal lines at swing points</li>
+                            <li>Mark FVGs with rectangles</li>
+                            <li>Use different colors for different concepts</li>
+                            <li>Review your analysis after price moves</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- TradingView Widget Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+        let tvWidget;
+        
+        function createWidget(symbol = "FX:EURUSD") {
+            const container = document.getElementById('tradingview_chart');
+            container.innerHTML = '';
+            
+            tvWidget = new TradingView.widget({
+                "autosize": true,
+                "symbol": symbol,
+                "interval": "60",
+                "timezone": "America/New_York",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "container_id": "tradingview_chart",
+                "hide_side_toolbar": false,
+                "studies": [
+                    "MASimple@tv-basicstudies"
+                ],
+                "toolbar_bg": "#1e222d",
+                "withdateranges": true,
+                "details": true,
+                "hotlist": true,
+                "calendar": true,
+                "show_popup_button": true,
+                "popup_width": "1000",
+                "popup_height": "650",
+                "drawings_access": {
+                    "type": "all",
+                    "tools": [{
+                        "name": "Trend Line"
+                    }, {
+                        "name": "Rectangle"
+                    }, {
+                        "name": "Horizontal Line"
+                    }, {
+                        "name": "Fib Retracement"
+                    }]
+                }
+            });
+        }
+        
+        // Initialize widget
+        document.addEventListener('DOMContentLoaded', function() {
+            createWidget();
+            
+            // Symbol button click handlers
+            document.querySelectorAll('.symbol-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const symbol = this.getAttribute('data-symbol');
+                    createWidget(symbol);
+                    
+                    // Update active state
+                    document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
