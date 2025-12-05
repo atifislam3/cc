@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chart Analysis - ICT Trading Academy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .analyze-page {
+            padding-top: 80px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        .upload-zone {
+            border: 3px dashed #3498db;
+            border-radius: 20px;
+            padding: 60px 30px;
+            text-align: center;
+            background: rgba(52, 152, 219, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #2ecc71;
+            background: rgba(46, 204, 113, 0.1);
+        }
+        
+        .upload-zone i {
+            font-size: 4rem;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+        
+        .preview-container {
+            position: relative;
+            max-width: 100%;
+            margin: 20px 0;
+        }
+        
+        .preview-container img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .analysis-result {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .analysis-result h4 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .analysis-content {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        .concept-select-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #333;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 0 20px;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .step.completed .step-number {
+            background: #2ecc71;
+        }
+        
+        .step.active .step-number {
+            background: #f39c12;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line me-2"></i>ICT Trading Academy
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/chart">
+                            <i class="fas fa-chart-candlestick me-1"></i>Live Chart
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/analyze">
+                            <i class="fas fa-robot me-1"></i>AI Analysis
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/practice">
+                            <i class="fas fa-dumbbell me-1"></i>Practice
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p class="text-white mt-3">Analyzing your chart with AI...</p>
+        <p class="text-muted">This may take a few seconds</p>
+    </div>
+
+    <!-- Main Content -->
+    <main class="analyze-page">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h1 class="display-4 text-white mb-3">
+                    <i class="fas fa-robot text-primary me-3"></i>AI Chart Analysis
+                </h1>
+                <p class="lead text-white-50">
+                    Upload a screenshot of your chart and let AI analyze your ICT pattern identification
+                </p>
+            </div>
+
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+                    <span class="text-white">Upload Chart</span>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+                    <span class="text-white">Your Analysis</span>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-number">3</div>
+                    <span class="text-white">AI Feedback</span>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Upload Section -->
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h4 class="text-white">Drop your chart screenshot here</h4>
+                        <p class="text-white-50">or click to browse</p>
+                        <p class="text-muted small">Supports: PNG, JPG, JPEG (Max 16MB)</p>
+                        <input type="file" id="imageInput" accept="image/*" class="d-none">
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="preview-container text-center d-none" id="previewContainer">
+                        <img id="imagePreview" src="" alt="Chart Preview">
+                        <button class="btn btn-outline-danger btn-sm mt-3" id="removeImage">
+                            <i class="fas fa-times me-1"></i>Remove Image
+                        </button>
+                    </div>
+
+                    <!-- Analysis Form -->
+                    <div class="concept-select-card mt-4" id="analysisForm" style="display: none;">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-clipboard-check me-2"></i>What did you identify?
+                        </h5>
+                        
+                        <div class="mb-3">
+                            <label class="text-white-50 mb-2">Select the ICT concept you found:</label>
+                            <select class="form-select" id="conceptSelect">
+                                <option value="">-- Select a concept --</option>
+                                {% for key, concept in concepts.items() %}
+                                <option value="{{ concept.name }}">{{ concept.name }} ({{ concept.short_name }})</option>
+                                {% endfor %}
+                                <option value="multiple">Multiple Concepts</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="text-white-50 mb-2">Describe what you see (optional):</label>
+                            <textarea class="form-control" id="userAnalysis" rows="4" placeholder="E.g., I found a bullish FVG between the swing low and the order block. I think price will return to fill this gap before continuing higher..."></textarea>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg w-100" id="analyzeBtn">
+                            <i class="fas fa-magic me-2"></i>Analyze My Chart
+                        </button>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div class="analysis-result d-none" id="resultsSection">
+                        <h4>
+                            <i class="fas fa-brain text-primary me-2"></i>AI Analysis Results
+                        </h4>
+                        <div class="analysis-content" id="analysisContent">
+                            <!-- AI response will be inserted here -->
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-outline-primary" id="newAnalysis">
+                                <i class="fas fa-redo me-2"></i>Analyze Another Chart
+                            </button>
+                            <a href="/chart" class="btn btn-success">
+                                <i class="fas fa-chart-line me-2"></i>Practice on Live Chart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tips Sidebar -->
+                <div class="col-lg-4 mt-4 mt-lg-0">
+                    <div class="concept-select-card">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>Tips for Best Results
+                        </h5>
+                        <ul class="text-white-50">
+                            <li class="mb-2">Use clear, high-quality screenshots</li>
+                            <li class="mb-2">Include enough price action context</li>
+                            <li class="mb-2">Mark your identified patterns if possible</li>
+                            <li class="mb-2">Describe your analysis for better feedback</li>
+                            <li class="mb-2">Use TradingView for best chart quality</li>
+                        </ul>
+                    </div>
+
+                    <div class="concept-select-card">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-graduation-cap text-success me-2"></i>Learning Path
+                        </h5>
+                        <p class="text-white-50">
+                            Not sure what to look for? Follow our step-by-step learning path:
+                        </p>
+                        <ol class="text-white-50">
+                            <li><a href="/concept/bos" class="text-primary">Break of Structure</a></li>
+                            <li><a href="/concept/fvg" class="text-primary">Fair Value Gaps</a></li>
+                            <li><a href="/concept/liquidity" class="text-primary">Liquidity</a></li>
+                            <li><a href="/concept/order_blocks" class="text-primary">Order Blocks</a></li>
+                            <li><a href="/concept/premium_discount" class="text-primary">Premium/Discount</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 bg-dark text-white">
+        <div class="container text-center">
+            <p class="mb-0 text-muted">
+                &copy; 2024 ICT Trading Academy - Educational Forex Learning Tool
+            </p>
+            <p class="small text-muted mt-2">
+                <i class="fas fa-info-circle me-1"></i>
+                AI analysis is for educational purposes only. Not financial advice.
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadZone = document.getElementById('uploadZone');
+            const imageInput = document.getElementById('imageInput');
+            const previewContainer = document.getElementById('previewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+            const analysisForm = document.getElementById('analysisForm');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const resultsSection = document.getElementById('resultsSection');
+            const analysisContent = document.getElementById('analysisContent');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const removeImageBtn = document.getElementById('removeImage');
+            const newAnalysisBtn = document.getElementById('newAnalysis');
+            
+            let selectedFile = null;
+
+            // Click to upload
+            uploadZone.addEventListener('click', () => imageInput.click());
+
+            // Drag and drop
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            });
+
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('dragover');
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFile(files[0]);
+                }
+            });
+
+            // File input change
+            imageInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFile(e.target.files[0]);
+                }
+            });
+
+            function handleFile(file) {
+                if (!file.type.startsWith('image/')) {
+                    alert('Please upload an image file');
+                    return;
+                }
+                
+                // Validate file size (16MB max)
+                const maxSize = 16 * 1024 * 1024; // 16MB
+                if (file.size > maxSize) {
+                    alert('File is too large. Maximum size is 16MB.');
+                    return;
+                }
+
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    uploadZone.classList.add('d-none');
+                    previewContainer.classList.remove('d-none');
+                    analysisForm.style.display = 'block';
+                    
+                    // Update steps
+                    document.getElementById('step1').classList.remove('active');
+                    document.getElementById('step1').classList.add('completed');
+                    document.getElementById('step2').classList.add('active');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Remove image
+            removeImageBtn.addEventListener('click', () => {
+                selectedFile = null;
+                imageInput.value = '';
+                uploadZone.classList.remove('d-none');
+                previewContainer.classList.add('d-none');
+                analysisForm.style.display = 'none';
+                resultsSection.classList.add('d-none');
+                
+                // Reset steps
+                document.getElementById('step1').classList.add('active');
+                document.getElementById('step1').classList.remove('completed');
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step3').classList.remove('active', 'completed');
+            });
+
+            // Analyze button
+            analyzeBtn.addEventListener('click', async () => {
+                if (!selectedFile) {
+                    alert('Please upload a chart image first');
+                    return;
+                }
+
+                const concept = document.getElementById('conceptSelect').value;
+                const analysis = document.getElementById('userAnalysis').value;
+
+                // Show loading
+                loadingOverlay.classList.add('active');
+                
+                // Update steps
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step2').classList.add('completed');
+                document.getElementById('step3').classList.add('active');
+
+                const formData = new FormData();
+                formData.append('image', selectedFile);
+                formData.append('concept', concept);
+                formData.append('analysis', analysis);
+
+                try {
+                    const response = await fetch('/api/analyze', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    
+                    loadingOverlay.classList.remove('active');
+
+                    if (data.success) {
+                        // Format the response with markdown-like styling
+                        let formattedContent = data.analysis
+                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/\n/g, '<br>')
+                            .replace(/#{1,3}\s*(.*?)(?=<br>|$)/g, '<h5 class="text-primary mt-3">$1</h5>');
+                        
+                        analysisContent.innerHTML = formattedContent;
+                        resultsSection.classList.remove('d-none');
+                        
+                        // Scroll to results
+                        resultsSection.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Update step 3
+                        document.getElementById('step3').classList.remove('active');
+                        document.getElementById('step3').classList.add('completed');
+                    } else {
+                        alert('Error: ' + data.error);
+                        // Reset step 3
+                        document.getElementById('step3').classList.remove('active');
+                        document.getElementById('step2').classList.remove('completed');
+                        document.getElementById('step2').classList.add('active');
+                    }
+                } catch (error) {
+                    loadingOverlay.classList.remove('active');
+                    alert('Error analyzing chart: ' + error.message);
+                    document.getElementById('step3').classList.remove('active');
+                    document.getElementById('step2').classList.remove('completed');
+                    document.getElementById('step2').classList.add('active');
+                }
+            });
+
+            // New analysis
+            newAnalysisBtn.addEventListener('click', () => {
+                selectedFile = null;
+                imageInput.value = '';
+                document.getElementById('conceptSelect').value = '';
+                document.getElementById('userAnalysis').value = '';
+                uploadZone.classList.remove('d-none');
+                previewContainer.classList.add('d-none');
+                analysisForm.style.display = 'none';
+                resultsSection.classList.add('d-none');
+                
+                // Reset steps
+                document.getElementById('step1').classList.add('active');
+                document.getElementById('step1').classList.remove('completed');
+                document.getElementById('step2').classList.remove('active', 'completed');
+                document.getElementById('step3').classList.remove('active', 'completed');
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

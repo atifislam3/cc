@@ -2,12 +2,29 @@
 Forex ICT Concepts Learning Tool
 A comprehensive educational application for learning Inner Circle Trader (ICT) concepts
 Including: FVG, BOS, CHoCH, IDM, Order Blocks, Liquidity, and more
+With AI-powered chart analysis using Google Gemini
 """
 
 from flask import Flask, render_template, jsonify, request
 import json
+import os
+import io
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Optional imports for AI analysis (loaded when needed)
+try:
+    import google.generativeai as genai
+    import PIL.Image
+    GEMINI_AVAILABLE = True
+except ImportError:
+    GEMINI_AVAILABLE = False
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # ICT Concepts Database
 ICT_CONCEPTS = {
@@ -457,7 +474,107 @@ def api_quiz(concept_id):
     return jsonify([])
 
 
+@app.route('/analyze')
+def analyze_page():
+    """Page for uploading and analyzing chart screenshots"""
+    return render_template('analyze.html', concepts=ICT_CONCEPTS)
+
+
+@app.route('/api/analyze', methods=['POST'])
+def analyze_chart():
+    """API endpoint for analyzing chart screenshots with Gemini AI"""
+    try:
+        # Get the API key from environment variable
+        api_key = os.environ.get('GEMINI_API_KEY')
+        if not api_key:
+            return jsonify({
+                "success": False,
+                "error": "Gemini API key not configured. Please set GEMINI_API_KEY environment variable."
+            }), 400
+        
+        # Check if Gemini is available
+        if not GEMINI_AVAILABLE:
+            return jsonify({
+                "success": False,
+                "error": "AI analysis dependencies not installed. Please install google-generativeai and pillow."
+            }), 500
+        
+        # Check if image was uploaded
+        if 'image' not in request.files:
+            return jsonify({
+                "success": False,
+                "error": "No image file provided"
+            }), 400
+        
+        file = request.files['image']
+        if file.filename == '':
+            return jsonify({
+                "success": False,
+                "error": "No image selected"
+            }), 400
+        
+        # Get the concept the user is trying to identify
+        concept_claim = request.form.get('concept', '')
+        user_analysis = request.form.get('analysis', '')
+        
+        # Read image data
+        image_data = file.read()
+        
+        # Configure Gemini
+        genai.configure(api_key=api_key)
+        
+        # Create the model
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        # Prepare the prompt for ICT analysis
+        prompt = f"""You are an expert ICT (Inner Circle Trader) forex trading analyst. Analyze this trading chart image and provide detailed feedback.
+
+The user claims to have identified: {concept_claim if concept_claim else 'ICT patterns (not specified)'}
+User's analysis: {user_analysis if user_analysis else 'No specific analysis provided'}
+
+Please analyze the chart and:
+
+1. **Pattern Identification**: Identify all ICT concepts visible in this chart including:
+   - Fair Value Gaps (FVG) - gaps between candle wicks
+   - Break of Structure (BOS) - breaks of swing highs/lows
+   - Change of Character (CHoCH) - first break against trend
+   - Order Blocks (OB) - last opposite candle before impulsive move
+   - Liquidity pools - equal highs/lows, obvious stop loss areas
+   - Premium/Discount zones - based on the visible range
+   - Market Structure - current trend direction
+
+2. **Validation**: Is the user's identification correct? Explain why or why not.
+
+3. **What They Missed**: Point out any ICT concepts they might have missed.
+
+4. **Trading Opportunity**: Based on the chart, what would be the ideal trade setup using ICT methodology?
+
+5. **Score**: Rate their analysis from 1-10 and provide specific feedback for improvement.
+
+Be educational and helpful. Format your response clearly with headers."""
+
+        # Load image for Gemini
+        image = PIL.Image.open(io.BytesIO(image_data))
+        
+        # Generate response
+        response = model.generate_content([prompt, image])
+        
+        return jsonify({
+            "success": True,
+            "analysis": response.text,
+            "concept_claimed": concept_claim,
+            "user_analysis": user_analysis
+        })
+        
+    except Exception as e:
+        # Log the full error for debugging
+        logger.error(f"Error analyzing chart: {str(e)}", exc_info=True)
+        return jsonify({
+            "success": False,
+            "error": "An error occurred while analyzing the chart. Please try again or check your API key."
+        }), 500
+
+
 if __name__ == '__main__':
-    import os
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     app.run(debug=debug_mode, port=5000)
