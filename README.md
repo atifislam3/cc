@@ -40,3 +40,7 @@ python3 cc.py
 ### After That Open Cmd and go the Directory that you downloaded 
 
 ## run `python cc.py`
+
+## Contributing
+
+Want to contribute documentation or instructions? See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to submit your contributions, including PDF files.
