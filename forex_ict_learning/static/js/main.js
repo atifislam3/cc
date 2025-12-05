@@ -1,5 +1,8 @@
 /**
  * ICT Trading Academy - Main JavaScript
+ * 
+ * Educational tool for learning Inner Circle Trader (ICT) concepts
+ * with interactive visualizations and practice exercises.
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -131,10 +134,16 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Trading Session Timer
  * Shows which trading session is currently active
+ * Note: Uses EST timezone. For accurate DST handling in production,
+ * consider using a timezone library like Luxon or date-fns-tz.
  */
 function updateSessionIndicator() {
     const now = new Date();
-    const estOffset = -5; // EST offset from UTC
+    // Check if DST is in effect (March - November in US)
+    const jan = new Date(now.getFullYear(), 0, 1);
+    const jul = new Date(now.getFullYear(), 6, 1);
+    const isDST = now.getTimezoneOffset() < Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+    const estOffset = isDST ? -4 : -5; // EDT is -4, EST is -5
     const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
     const estTime = new Date(utc + (3600000 * estOffset));
     const hours = estTime.getHours();
