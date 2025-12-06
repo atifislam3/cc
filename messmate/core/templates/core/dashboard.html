@@ -1,0 +1,77 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard - MessMate{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">🍽️ Upcoming Meals</h2>
+        <p class="text-muted">View and manage your meal preferences</p>
+    </div>
+</div>
+
+<div class="row">
+    {% if meal_data %}
+        {% for item in meal_data %}
+        <div class="col-md-4 mb-4">
+            <div class="card meal-card h-100">
+                <div class="card-header bg-{% if item.meal.meal_type == 'Breakfast' %}warning{% elif item.meal.meal_type == 'Lunch' %}info{% else %}secondary{% endif %} text-{% if item.meal.meal_type == 'Breakfast' %}dark{% else %}white{% endif %}">
+                    <h5 class="mb-0">
+                        {% if item.meal.meal_type == 'Breakfast' %}🌅{% elif item.meal.meal_type == 'Lunch' %}☀️{% else %}🌙{% endif %}
+                        {{ item.meal.meal_type }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title">{{ item.meal.name }}</h6>
+                    <p class="card-text">
+                        <strong>Date:</strong> {{ item.meal.date }}<br>
+                        <strong>Time:</strong> {{ item.meal_time }}<br>
+                        <strong>Cost:</strong> ₹{{ item.meal.cost }}
+                    </p>
+                    
+                    {% if item.has_skipped %}
+                        <p class="opted-out">✅ You have opted out</p>
+                    {% elif item.can_skip %}
+                        <a href="{% url 'skip_meal' item.meal.id %}" class="btn btn-danger">
+                            Skip This Meal
+                        </a>
+                    {% else %}
+                        <p class="text-muted">
+                            <em>Cannot skip - deadline passed</em>
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-muted">
+                    {% if item.meal.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No upcoming meals available. Please check back later.
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">ℹ️ How it works</h5>
+                <ul class="mb-0">
+                    <li>You can skip meals up to <strong>2 hours</strong> before the meal time.</li>
+                    <li>Skipping meals helps reduce food waste and saves money.</li>
+                    <li>View your skip history in the "Menu History" section.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

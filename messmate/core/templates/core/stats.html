@@ -1,0 +1,103 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Manager Stats - MessMate{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">📊 Manager Dashboard</h2>
+        <p class="text-muted">Daily meal statistics for {{ today }}</p>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Total Students</h5>
+                <h2 class="card-text">{{ total_students }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Total Money Saved</h5>
+                <h2 class="card-text">₹{{ total_money_saved }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Today's Meals</h5>
+                <h2 class="card-text">{{ meal_stats|length }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Meal Statistics Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Today's Meal Count</h5>
+            </div>
+            <div class="card-body">
+                {% if meal_stats %}
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Meal Type</th>
+                            <th>Meal Name</th>
+                            <th>Total Students</th>
+                            <th>Skipped Count</th>
+                            <th>To Cook</th>
+                            <th>Cost per Meal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in meal_stats %}
+                        <tr>
+                            <td>
+                                {% if stat.meal.meal_type == 'Breakfast' %}🌅{% elif stat.meal.meal_type == 'Lunch' %}☀️{% else %}🌙{% endif %}
+                                {{ stat.meal.meal_type }}
+                            </td>
+                            <td>{{ stat.meal.name }}</td>
+                            <td>{{ total_students }}</td>
+                            <td><span class="badge bg-warning text-dark">{{ stat.skipped_count }}</span></td>
+                            <td><span class="badge bg-success">{{ stat.to_cook }}</span></td>
+                            <td>₹{{ stat.meal.cost }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="alert alert-info">
+                    No meals scheduled for today.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Information Section -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">📌 Key Metrics Explanation</h5>
+                <ul class="mb-0">
+                    <li><strong>Total Students:</strong> Count of all registered students.</li>
+                    <li><strong>Skipped Count:</strong> Number of students who opted out of the meal.</li>
+                    <li><strong>To Cook:</strong> Total Students - Skipped Count = Number of meals to prepare.</li>
+                    <li><strong>Total Money Saved:</strong> Sum of cost of all skipped meals across all time.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
