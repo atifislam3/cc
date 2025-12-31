@@ -2,8 +2,9 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
+from django.core.management import call_command
 from datetime import date, timedelta
-from .models import StudentProfile, MealItem, SkippedMeal
+from .models import StudentProfile, MealItem, SkippedMeal, WeeklyMenuTemplate
 
 
 class StudentProfileModelTest(TestCase):
@@ -213,3 +214,74 @@ class ManagerStatsViewTest(TestCase):
         response = self.client.get(reverse('manager_stats'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Total Money Saved')
+
+
+class WeeklyMenuTemplateTest(TestCase):
+    def test_weekly_template_creation(self):
+        """Test WeeklyMenuTemplate model creation."""
+        template = WeeklyMenuTemplate.objects.create(
+            day_of_week=0,  # Monday
+            meal_type='Breakfast',
+            name='Idli Sambar',
+            cost=50,
+            is_active=True
+        )
+        self.assertEqual(template.day_of_week, 0)
+        self.assertEqual(template.meal_type, 'Breakfast')
+        self.assertEqual(template.name, 'Idli Sambar')
+        self.assertEqual(template.cost, 50)
+        
+    def test_weekly_template_str(self):
+        """Test WeeklyMenuTemplate string representation."""
+        template = WeeklyMenuTemplate.objects.create(
+            day_of_week=1,  # Tuesday
+            meal_type='Lunch',
+            name='Chicken Biryani',
+            cost=150
+        )
+        self.assertIn('Tuesday', str(template))
+        self.assertIn('Lunch', str(template))
+        self.assertIn('Chicken Biryani', str(template))
+
+
+class GenerateMealsCommandTest(TestCase):
+    def test_generate_meals_from_template(self):
+        """Test that meals are generated from weekly templates."""
+        # Create a template for Monday Breakfast
+        WeeklyMenuTemplate.objects.create(
+            day_of_week=0,  # Monday
+            meal_type='Breakfast',
+            name='Test Breakfast',
+            cost=50,
+            is_active=True
+        )
+        
+        # Generate meals for 1 week
+        call_command('generate_weekly_meals', '--weeks', '1')
+        
+        # Check that meals were created
+        self.assertTrue(MealItem.objects.filter(
+            meal_type='Breakfast',
+            name='Test Breakfast',
+            from_template=True
+        ).exists())
+        
+    def test_generate_meals_no_duplicates(self):
+        """Test that generating meals twice doesn't create duplicates."""
+        WeeklyMenuTemplate.objects.create(
+            day_of_week=0,
+            meal_type='Lunch',
+            name='Test Lunch',
+            cost=100,
+            is_active=True
+        )
+        
+        # Generate meals twice
+        call_command('generate_weekly_meals', '--weeks', '1')
+        count_first = MealItem.objects.count()
+        
+        call_command('generate_weekly_meals', '--weeks', '1')
+        count_second = MealItem.objects.count()
+        
+        # Count should be the same
+        self.assertEqual(count_first, count_second)

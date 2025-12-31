@@ -1,0 +1,68 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <h1>{{ title }}</h1>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+        <h2>Current Weekly Menu Template</h2>
+        {% if templates %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #dee2e6;">
+                    <th style="padding: 10px; text-align: left; border: 1px solid #adb5bd;">Day</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #adb5bd;">Meal Type</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #adb5bd;">Name</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #adb5bd;">Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for template in templates %}
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">{{ template.get_day_of_week_display }}</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">{{ template.meal_type }}</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">{{ template.name }}</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">₹{{ template.cost }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: #dc3545;">No weekly menu templates configured. Please add templates first.</p>
+        {% endif %}
+    </div>
+    
+    <div style="background: #fff; padding: 20px; border: 1px solid #dee2e6; border-radius: 5px;">
+        <h2>Generate Meals</h2>
+        <p>This will create meal items based on your weekly menu template for the specified number of weeks starting from today.</p>
+        
+        <form method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <div style="margin-bottom: 15px;">
+                <label for="weeks" style="display: block; margin-bottom: 5px; font-weight: bold;">Number of weeks to generate:</label>
+                <select name="weeks" id="weeks" style="padding: 8px; font-size: 14px; border: 1px solid #ced4da; border-radius: 4px;">
+                    <option value="1">1 week</option>
+                    <option value="2" selected>2 weeks</option>
+                    <option value="3">3 weeks</option>
+                    <option value="4">4 weeks</option>
+                    <option value="8">8 weeks (2 months)</option>
+                </select>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin-bottom: 20px;">
+                <strong>Note:</strong> This will NOT overwrite existing meals. Only new dates will be populated.
+            </div>
+            
+            <div>
+                <button type="submit" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 10px;">
+                    Generate Meals
+                </button>
+                <a href="../../mealitem/" style="padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
