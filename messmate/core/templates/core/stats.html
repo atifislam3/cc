@@ -1,0 +1,140 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Manager Dashboard - MessMate{% endblock %}
+
+{% block content %}
+<!-- Welcome Banner for Managers -->
+<div class="welcome-banner">
+    <h1>Manager Dashboard 📊</h1>
+    <p>Kitchen Planning & Food Waste Management</p>
+    <small style="opacity: 0.9;">Restricted Access - Staff Only</small>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4" style="color: var(--primary-color); font-weight: 700;">
+            📅 Daily Statistics for {{ today|date:"l, F d, Y" }}
+        </h2>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px;">
+            <div class="card-body text-center">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">👥</div>
+                <h5 class="card-title" style="font-weight: 600;">Total Students</h5>
+                <h1 class="card-text" style="font-size: 3rem; font-weight: 700;">{{ total_students }}</h1>
+                <small>Registered in system</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 15px;">
+            <div class="card-body text-center">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">💰</div>
+                <h5 class="card-title" style="font-weight: 600;">Total Money Saved</h5>
+                <h1 class="card-text" style="font-size: 3rem; font-weight: 700;">₹{{ total_money_saved }}</h1>
+                <small>Across all skipped meals</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 15px;">
+            <div class="card-body text-center">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">🍽️</div>
+                <h5 class="card-title" style="font-weight: 600;">Today's Meals</h5>
+                <h1 class="card-text" style="font-size: 3rem; font-weight: 700;">{{ meal_stats|length }}</h1>
+                <small>Scheduled for today</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Meal Statistics Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card" style="border-radius: 15px;">
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px 15px 0 0;">
+                <h5 class="mb-0" style="font-weight: 700;">
+                    🍳 Today's Meal Count & Kitchen Planning
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if meal_stats %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="background-color: #f8f9fa;">
+                            <tr>
+                                <th style="font-weight: 700;">Meal Type</th>
+                                <th style="font-weight: 700;">Meal Name</th>
+                                <th style="font-weight: 700;">Total Students</th>
+                                <th style="font-weight: 700;">Skipped Count</th>
+                                <th style="font-weight: 700; color: #27ae60;">To Cook</th>
+                                <th style="font-weight: 700;">Cost per Meal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in meal_stats %}
+                            <tr>
+                                <td style="font-size: 1.1rem;">
+                                    <span style="font-size: 1.5rem;">
+                                        {% if stat.meal.meal_type == 'Breakfast' %}🌅
+                                        {% elif stat.meal.meal_type == 'Lunch' %}☀️
+                                        {% else %}🌙{% endif %}
+                                    </span>
+                                    <strong>{{ stat.meal.meal_type }}</strong>
+                                </td>
+                                <td style="font-size: 1.05rem;">{{ stat.meal.name }}</td>
+                                <td><span class="badge bg-primary" style="font-size: 1rem; padding: 0.5rem 1rem;">{{ total_students }}</span></td>
+                                <td><span class="badge bg-warning text-dark" style="font-size: 1rem; padding: 0.5rem 1rem;">{{ stat.skipped_count }}</span></td>
+                                <td><span class="badge bg-success" style="font-size: 1.1rem; padding: 0.5rem 1.25rem; font-weight: 700;">{{ stat.to_cook }}</span></td>
+                                <td style="font-size: 1.05rem; font-weight: 600;">₹{{ stat.meal.cost }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info" style="border-radius: 10px; padding: 2rem; text-align: center;">
+                    <h5>📭 No meals scheduled for today</h5>
+                    <p class="mb-0">Check the admin panel to add meals or generate from weekly templates.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Information Section -->
+<div class="info-card">
+    <h5>📌 Key Metrics Explanation</h5>
+    <ul class="mb-0">
+        <li>
+            <strong>Total Students:</strong> Count of all registered students in the system
+        </li>
+        <li>
+            <strong>Skipped Count:</strong> Number of students who opted out of this specific meal
+        </li>
+        <li>
+            <strong>To Cook:</strong> <span style="color: #ffd700;">Most Important!</span> Total Students - Skipped Count = Number of meals to prepare in the kitchen
+        </li>
+        <li>
+            <strong>Total Money Saved:</strong> Cumulative cost of all skipped meals (shows system-wide waste reduction)
+        </li>
+        <li>
+            <strong>Access Control:</strong> This dashboard is only accessible to staff members (Managers/Wardens/Chefs)
+        </li>
+    </ul>
+</div>
+
+<!-- Quick Action -->
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <a href="/admin/" class="btn btn-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; padding: 1rem 2rem; font-weight: 600;">
+            🔧 Go to Admin Panel
+        </a>
+    </div>
+</div>
+{% endblock %}
