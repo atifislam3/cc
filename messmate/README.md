@@ -42,6 +42,35 @@ python manage.py runserver
 - **Student/User Interface**: http://localhost:8000/
 - **Admin Interface**: http://localhost:8000/admin/
 
+## User Management
+
+### Creating Student and Manager Accounts
+
+**Public registration is disabled.** Only administrators can create user accounts to ensure proper control over system access.
+
+#### Creating a Student Account
+1. Log in to the admin panel at `/admin/`
+2. Navigate to **Users** under "Authentication and Authorization"
+3. Click **Add User**
+4. Enter username and password (twice)
+5. Click **Save and continue editing**
+6. Fill in student details:
+   - **Personal info**: First name, Last name, Email (optional)
+   - **Student Profile**: Roll Number and Room Number
+7. **Permissions**: Leave "Staff status" and "Superuser status" unchecked for regular students
+8. Click **Save**
+
+#### Creating a Manager Account
+Follow the same steps as above, but:
+- Check **Staff status** to give access to Manager Stats dashboard
+- Leave "Superuser status" unchecked (unless you want them to have admin access)
+
+#### Providing Credentials to Users
+After creating an account:
+1. Share the username and initial password with the user
+2. Direct them to: http://localhost:8000/login/
+3. Recommend they change their password after first login (via admin panel)
+
 ## Weekly Menu Management
 
 ### Setting Up Weekly Menu Template

@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.urls import path
 from django.shortcuts import render, redirect
@@ -7,11 +9,29 @@ from datetime import date, timedelta
 from .models import StudentProfile, MealItem, SkippedMeal, WeeklyMenuTemplate
 
 
-@admin.register(StudentProfile)
-class StudentProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'roll_number', 'room_number')
-    search_fields = ('user__username', 'roll_number', 'room_number')
-    list_per_page = 50
+# Inline admin for StudentProfile
+class StudentProfileInline(admin.StackedInline):
+    model = StudentProfile
+    can_delete = False
+    verbose_name_plural = 'Student Profile'
+    fields = ('roll_number', 'room_number')
+
+
+# Extend UserAdmin to include StudentProfile
+class UserAdmin(BaseUserAdmin):
+    inlines = (StudentProfileInline,)
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'get_roll_number')
+    
+    def get_roll_number(self, obj):
+        if hasattr(obj, 'studentprofile'):
+            return obj.studentprofile.roll_number
+        return '-'
+    get_roll_number.short_description = 'Roll Number'
+
+
+# Unregister the default User admin and register our custom one
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
 
 
 @admin.register(WeeklyMenuTemplate)
