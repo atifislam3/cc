@@ -6,82 +6,96 @@
 <!-- Welcome Banner -->
 <div class="welcome-banner">
     <h1>Welcome back, {{ user.username }}! 👋</h1>
-    <p>Manage your meal preferences and reduce food waste</p>
+    <p>Manage your meal preferences for the week ahead</p>
 </div>
 
 <div class="row">
     <div class="col-12">
         <h2 class="mb-4" style="color: var(--primary-color); font-weight: 700;">
-            🍽️ Upcoming Meals
+            🍽️ Upcoming Meals (Next 7 Days)
         </h2>
         <p class="text-muted" style="font-size: 1.1rem;">
-            View and manage your meal preferences. Skip meals you won't attend to help reduce food waste!
+            View and skip meals in advance. Plan your week and help reduce food waste!
         </p>
     </div>
 </div>
 
 <div class="row mt-4">
     {% if meal_data %}
-        {% for item in meal_data %}
-        <div class="col-md-4 mb-4">
-            <div class="card meal-card h-100">
-                <div class="card-header text-center
-                    {% if item.meal.meal_type == 'Breakfast' %}
-                        bg-warning text-dark
-                    {% elif item.meal.meal_type == 'Lunch' %}
-                        bg-info text-white
-                    {% else %}
-                        bg-dark text-white
-                    {% endif %}">
-                    <div class="meal-icon">
-                        {% if item.meal.meal_type == 'Breakfast' %}🌅
-                        {% elif item.meal.meal_type == 'Lunch' %}☀️
-                        {% else %}🌙{% endif %}
-                    </div>
-                    <h5 class="mb-0" style="font-weight: 700;">{{ item.meal.meal_type }}</h5>
+        {% regroup meal_data by meal.date as meals_by_date %}
+        
+        {% for date_group in meals_by_date %}
+        <div class="col-12 mb-4">
+            <div class="card" style="border-radius: 15px; border: 2px solid #e0e0e0;">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px 15px 0 0;">
+                    <h4 class="mb-0" style="font-weight: 700;">
+                        📅 {{ date_group.grouper|date:"l, F d, Y" }}
+                    </h4>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title text-center" style="font-weight: 700; color: var(--primary-color); margin-bottom: 1.5rem;">
-                        {{ item.meal.name }}
-                    </h5>
-                    <div class="meal-detail-row">
-                        <strong>📅 Date:</strong> {{ item.meal.date|date:"D, M d, Y" }}
-                    </div>
-                    <div class="meal-detail-row">
-                        <strong>🕒 Time:</strong> {{ item.meal_time|time:"g:i A" }}
-                    </div>
-                    <div class="meal-detail-row">
-                        <strong>💰 Cost:</strong> ₹{{ item.meal.cost }}
-                    </div>
-                    
-                    <div class="mt-4 text-center">
-                        {% if item.has_skipped %}
-                            <div class="opted-out">
-                                ✅ You have opted out
+                <div class="card-body" style="padding: 1.5rem;">
+                    <div class="row">
+                        {% for item in date_group.list %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card meal-card h-100">
+                                <div class="card-header text-center
+                                    {% if item.meal.meal_type == 'Breakfast' %}
+                                        bg-warning text-dark
+                                    {% elif item.meal.meal_type == 'Lunch' %}
+                                        bg-info text-white
+                                    {% else %}
+                                        bg-dark text-white
+                                    {% endif %}">
+                                    <div class="meal-icon">
+                                        {% if item.meal.meal_type == 'Breakfast' %}🌅
+                                        {% elif item.meal.meal_type == 'Lunch' %}☀️
+                                        {% else %}🌙{% endif %}
+                                    </div>
+                                    <h5 class="mb-0" style="font-weight: 700;">{{ item.meal.meal_type }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-center" style="font-weight: 700; color: var(--primary-color); margin-bottom: 1.5rem;">
+                                        {{ item.meal.name }}
+                                    </h5>
+                                    <div class="meal-detail-row">
+                                        <strong>🕒 Time:</strong> {{ item.meal_time|time:"g:i A" }}
+                                    </div>
+                                    <div class="meal-detail-row">
+                                        <strong>💰 Cost:</strong> ₹{{ item.meal.cost }}
+                                    </div>
+                                    
+                                    <div class="mt-4 text-center">
+                                        {% if item.has_skipped %}
+                                            <div class="opted-out">
+                                                ✅ You have opted out
+                                            </div>
+                                            <small class="text-muted d-block mt-2">
+                                                Saving ₹{{ item.meal.cost }}!
+                                            </small>
+                                        {% elif item.can_skip %}
+                                            <a href="{% url 'skip_meal' item.meal.id %}" class="btn btn-danger w-100">
+                                                🚫 Skip This Meal
+                                            </a>
+                                            <small class="text-muted d-block mt-2">
+                                                Save ₹{{ item.meal.cost }} & reduce waste
+                                            </small>
+                                        {% else %}
+                                            <p class="text-muted" style="font-style: italic;">
+                                                ⏰ Cannot skip - deadline has passed
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-footer text-center" style="background: rgba(0,0,0,0.03);">
+                                    {% if item.meal.is_active %}
+                                        <span class="badge bg-success">✓ Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">○ Inactive</span>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <small class="text-muted d-block mt-2">
-                                You're saving ₹{{ item.meal.cost }}!
-                            </small>
-                        {% elif item.can_skip %}
-                            <a href="{% url 'skip_meal' item.meal.id %}" class="btn btn-danger w-100">
-                                🚫 Skip This Meal
-                            </a>
-                            <small class="text-muted d-block mt-2">
-                                Save ₹{{ item.meal.cost }} & reduce waste
-                            </small>
-                        {% else %}
-                            <p class="text-muted" style="font-style: italic;">
-                                ⏰ Cannot skip - deadline has passed
-                            </p>
-                        {% endif %}
+                        </div>
+                        {% endfor %}
                     </div>
-                </div>
-                <div class="card-footer text-center" style="background: rgba(0,0,0,0.03);">
-                    {% if item.meal.is_active %}
-                        <span class="badge bg-success">✓ Active</span>
-                    {% else %}
-                        <span class="badge bg-secondary">○ Inactive</span>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -101,10 +115,13 @@
     <h5>💡 How MessMate Works</h5>
     <ul class="mb-0">
         <li>
+            <strong>Plan ahead:</strong> View all meals for the next 7 days
+        </li>
+        <li>
             <strong>Skip meals early:</strong> You can opt-out up to <strong>2 hours</strong> before meal time
         </li>
         <li>
-            <strong>Save money:</strong> Every skipped meal reduces your food costs and the amount shown is your savings
+            <strong>Save money:</strong> Every skipped meal reduces your food costs
         </li>
         <li>
             <strong>Reduce waste:</strong> Help the hostel prepare accurate meal quantities

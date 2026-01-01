@@ -18,28 +18,18 @@ MEAL_TIMES = {
 
 
 def get_current_and_next_meals():
-    """Get current and next available meals based on current system time."""
+    """Get upcoming meals for the next 7 days."""
     today = timezone.now().date()
-    current_time = timezone.now().time()
+    week_from_today = today + timedelta(days=7)
     
-    meals = []
+    # Get all meals from today to 7 days ahead
+    meals = MealItem.objects.filter(
+        date__gte=today,
+        date__lt=week_from_today,
+        is_active=True
+    ).order_by('date', 'meal_type')
     
-    # Get today's meals
-    todays_meals = MealItem.objects.filter(date=today, is_active=True).order_by('meal_type')
-    
-    for meal in todays_meals:
-        meal_time = MEAL_TIMES.get(meal.meal_type)
-        if meal_time:
-            meals.append(meal)
-    
-    # If no more meals today, get tomorrow's meals
-    tomorrow = today + timedelta(days=1)
-    tomorrows_meals = MealItem.objects.filter(date=tomorrow, is_active=True).order_by('meal_type')
-    
-    for meal in tomorrows_meals:
-        meals.append(meal)
-    
-    return meals[:3]  # Return up to 3 meals
+    return list(meals)
 
 
 def can_skip_meal(meal):
