@@ -176,7 +176,12 @@ def menu_history_view(request):
 
 @login_required
 def manager_stats_view(request):
-    """Manager dashboard showing meal statistics."""
+    """Manager dashboard showing meal statistics - staff access only."""
+    # Check if user is staff (manager/warden/chef)
+    if not request.user.is_staff:
+        messages.error(request, 'Access denied. This area is for managers only.')
+        return redirect('dashboard')
+    
     today = timezone.now().date()
     
     # Get today's meals

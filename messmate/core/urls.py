@@ -9,5 +9,6 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('skip/<int:meal_id>/', views.skip_meal_view, name='skip_meal'),
     path('history/', views.menu_history_view, name='menu_history'),
-    path('stats/', views.manager_stats_view, name='manager_stats'),
+    # Manager-specific URLs
+    path('manager/', views.manager_stats_view, name='manager_stats'),
 ]

@@ -5,26 +5,34 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <h2 class="mb-4">📜 Menu History</h2>
-        <p class="text-muted">Your meal skip history</p>
+        <h2 class="mb-4" style="color: var(--primary-color); font-weight: 700;">
+            📜 Menu History
+        </h2>
+        <p class="text-muted" style="font-size: 1.1rem;">
+            Track your meal skips and see how much you've saved!
+        </p>
     </div>
 </div>
 
-<!-- Summary Card -->
+<!-- Summary Cards -->
 <div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title">Your Total Savings</h5>
-                <h2 class="card-text">₹{{ total_saved }}</h2>
+    <div class="col-md-6 mb-3">
+        <div class="card h-100" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 15px;">
+            <div class="card-body text-center">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">💰</div>
+                <h5 class="card-title" style="font-weight: 600;">Your Total Savings</h5>
+                <h1 class="card-text" style="font-size: 3.5rem; font-weight: 700;">₹{{ total_saved }}</h1>
+                <small>Money saved by skipping meals</small>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <h5 class="card-title">Meals Skipped</h5>
-                <h2 class="card-text">{{ skipped_meals|length }}</h2>
+    <div class="col-md-6 mb-3">
+        <div class="card h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px;">
+            <div class="card-body text-center">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">🍽️</div>
+                <h5 class="card-title" style="font-weight: 600;">Meals Skipped</h5>
+                <h1 class="card-text" style="font-size: 3.5rem; font-weight: 700;">{{ skipped_meals|length }}</h1>
+                <small>Total meals opted out</small>
             </div>
         </div>
     </div>
@@ -33,44 +41,84 @@
 <!-- Skipped Meals Table -->
 <div class="row">
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Skipped Meals</h5>
+        <div class="card" style="border-radius: 15px;">
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px 15px 0 0;">
+                <h5 class="mb-0" style="font-weight: 700;">
+                    📋 Your Skipped Meals History
+                </h5>
             </div>
             <div class="card-body">
                 {% if skipped_meals %}
-                <table class="table table-striped table-hover">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Date</th>
-                            <th>Meal Type</th>
-                            <th>Meal Name</th>
-                            <th>Cost Saved</th>
-                            <th>Skipped On</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for skip in skipped_meals %}
-                        <tr>
-                            <td>{{ skip.meal_item.date }}</td>
-                            <td>
-                                {% if skip.meal_item.meal_type == 'Breakfast' %}🌅{% elif skip.meal_item.meal_type == 'Lunch' %}☀️{% else %}🌙{% endif %}
-                                {{ skip.meal_item.meal_type }}
-                            </td>
-                            <td>{{ skip.meal_item.name }}</td>
-                            <td><span class="badge bg-success">₹{{ skip.meal_item.cost }}</span></td>
-                            <td>{{ skip.created_at|date:"M d, Y H:i" }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="background-color: #f8f9fa;">
+                            <tr>
+                                <th style="font-weight: 700;">Date</th>
+                                <th style="font-weight: 700;">Meal Type</th>
+                                <th style="font-weight: 700;">Meal Name</th>
+                                <th style="font-weight: 700;">Cost Saved</th>
+                                <th style="font-weight: 700;">Skipped On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for skip in skipped_meals %}
+                            <tr>
+                                <td style="font-size: 1.05rem;">{{ skip.meal_item.date|date:"D, M d, Y" }}</td>
+                                <td style="font-size: 1.1rem;">
+                                    <span style="font-size: 1.5rem;">
+                                        {% if skip.meal_item.meal_type == 'Breakfast' %}🌅
+                                        {% elif skip.meal_item.meal_type == 'Lunch' %}☀️
+                                        {% else %}🌙{% endif %}
+                                    </span>
+                                    <strong>{{ skip.meal_item.meal_type }}</strong>
+                                </td>
+                                <td style="font-size: 1.05rem;">{{ skip.meal_item.name }}</td>
+                                <td>
+                                    <span class="badge bg-success" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                                        ₹{{ skip.meal_item.cost }}
+                                    </span>
+                                </td>
+                                <td style="font-size: 0.95rem; color: #666;">
+                                    {{ skip.created_at|date:"M d, Y" }}<br>
+                                    <small>{{ skip.created_at|date:"g:i A" }}</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 {% else %}
-                <div class="alert alert-info">
-                    You haven't skipped any meals yet.
+                <div class="alert alert-info" style="border-radius: 10px; padding: 2rem; text-align: center;">
+                    <h5>📭 No skipped meals yet</h5>
+                    <p class="mb-0">Go to the Dashboard to skip upcoming meals and start saving!</p>
                 </div>
                 {% endif %}
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Impact Card -->
+{% if skipped_meals %}
+<div class="info-card mt-4">
+    <h5>🌱 Your Environmental Impact</h5>
+    <p class="mb-0">
+        By skipping {{ skipped_meals|length }} meal{{ skipped_meals|length|pluralize }}, you've helped:
+    </p>
+    <ul class="mt-2 mb-0">
+        <li><strong>Reduce food waste</strong> - Kitchen prepared exactly what was needed</li>
+        <li><strong>Save ₹{{ total_saved }}</strong> - Money that can be better utilized</li>
+        <li><strong>Support sustainability</strong> - Minimizing resources and environmental impact</li>
+    </ul>
+</div>
+{% endif %}
+
+<!-- Back to Dashboard -->
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <a href="{% url 'dashboard' %}" class="btn btn-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; padding: 1rem 2rem; font-weight: 600;">
+            ← Back to Dashboard
+        </a>
     </div>
 </div>
 {% endblock %}

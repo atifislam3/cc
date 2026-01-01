@@ -5,15 +5,30 @@ A professional Django-based web application designed to reduce food waste in uni
 ## Features
 
 ### For Students
-- **Dashboard**: View upcoming meals and skip meals up to 2 hours before meal time
-- **Menu History**: Track your skipped meals and personal savings
-- **Bootstrap 5 UI**: Modern, responsive interface
+- **Professional Dashboard**: Modern gradient UI with upcoming meals display
+- **Smart Meal Skipping**: Skip meals up to 2 hours before meal time
+- **Personal Savings Tracker**: View your skipped meals history and total savings
+- **Responsive Design**: Bootstrap 5 with gradient cards and smooth animations
 
-### For Managers/Admin
-- **Weekly Menu Template**: Set up a repeating weekly menu that auto-generates meals
-- **Manager Dashboard**: View daily statistics (total students, skipped count, meals to cook, total savings)
+### For Managers/Warden/Chef (Staff Users)
+- **Separate Manager Dashboard**: Accessible at `/manager/` (staff-only access)
+- **Kitchen Planning**: View exact meal counts needed (To Cook = Total Students - Skipped Count)
+- **Daily Statistics**: Total students, skipped count, and money saved
+- **Weekly Menu Templates**: Set up repeating weekly menu that auto-generates meals
 - **Bulk Actions**: Mark multiple meals as active/inactive
-- **Auto-Generation**: Meals automatically generated from weekly templates
+
+### For Administrators
+- **User Management**: Create accounts for students and managers via admin panel
+- **Weekly Menu Setup**: Define 21 templates (7 days × 3 meals) for automated meal generation
+- **Access Control**: Manage staff permissions to control manager dashboard access
+
+## URLs and Access
+
+- **Student Dashboard**: `http://localhost:8000/` (logged-in students)
+- **Manager Dashboard**: `http://localhost:8000/manager/` (staff users only)
+- **Login**: `http://localhost:8000/login/`
+- **Menu History**: `http://localhost:8000/history/`
+- **Admin Panel**: `http://localhost:8000/admin/`
 
 ## Setup and Installation
 
@@ -39,7 +54,8 @@ python manage.py runserver
 ```
 
 ### 5. Access the Application
-- **Student/User Interface**: http://localhost:8000/
+- **Student Interface**: http://localhost:8000/
+- **Manager Dashboard**: http://localhost:8000/manager/ (requires staff status)
 - **Admin Interface**: http://localhost:8000/admin/
 
 ## User Management
